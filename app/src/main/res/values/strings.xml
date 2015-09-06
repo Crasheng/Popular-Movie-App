@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">PopularMovies_Final</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="pop_movies">Popular Movies</string>
+    <string name="rated_movies">Most Rated</string>
+    <string name="movie_title">Mooc MovieName for Testing</string>
+    <string name="title_activity_movie_detail">MovieDetailActivity</string>
+    <string name="overview">Overview</string>
+    <string name="refresh">Refresh</string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="dialog_fire_missiles">Missle</string>
+    <string name="fire">fire</string>
+    <string name="cancel">canel</string>
+    <string name="title_video_dialog">Choose Prefered Video</string>
+</resources>

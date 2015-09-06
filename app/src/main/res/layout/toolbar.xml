@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/toolbar"
+    android:minHeight="?attr/actionBarSize"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@drawable/reviewer_icon"
+    android:layout_width="match_parent">
+
+    <ImageButton
+        android:id="@+id/upButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="uphandler"
+        android:src="@drawable/backbutton"
+        android:layout_gravity="end"/>
+
+</android.support.v7.widget.Toolbar>

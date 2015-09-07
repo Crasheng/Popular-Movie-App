@@ -13,4 +13,6 @@
     <string name="fire">fire</string>
     <string name="cancel">canel</string>
     <string name="title_video_dialog">Choose Prefered Video</string>
+    <string name="reviews_button">Reviews</string>
+    <string name="reviews_button_single">Review</string>
 </resources>

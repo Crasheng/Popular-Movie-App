@@ -113,7 +113,6 @@
                 android:id="@+id/numberOfReviews"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="(0)"
                 android:textSize="20sp" />
 
             <Button
@@ -122,17 +121,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@id/numberOfReviews"
-                android:layout_toRightOf="@id/numberOfReviews"
-                android:text="@string/reviews_button" />
+                android:layout_toRightOf="@id/numberOfReviews" />
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="No Reviews"
-            android:textSize="@dimen/abc_text_size_title_material"
-            android:visibility="gone"/>
 
     </LinearLayout>
 

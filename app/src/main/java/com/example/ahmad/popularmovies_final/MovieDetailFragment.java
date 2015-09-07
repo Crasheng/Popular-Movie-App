@@ -1,5 +1,6 @@
 package com.example.ahmad.popularmovies_final;
 
+import android.support.v4.app.Fragment;
 
 import android.app.Dialog;
 import android.content.ContentValues;
@@ -73,6 +74,9 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setRetainInstance(true);
+        Uri uri = getUri(savedInstanceState);
+        String movie_id = uri.getQueryParameter(MoviesContract.MoviesEntry.MOV_COL_ID);
+        new FetchDataInternet(MovieDetailFragment.this, UtilityMovieData.REQUEST_REVIEWS).execute(movie_id);
         super.onCreate(savedInstanceState);
     }
 
@@ -102,20 +106,22 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
         Uri uri;
-        args = getArguments();
-        if (args != null) {
-            uri = args.getParcelable(DETAIL_DATA_URI);
-        } else {
-            uri = getActivity().getIntent().getData();
-        }
-
-
+        uri = getUri(args);
         return new CursorLoader(getActivity(),
                 uri,
                 projections_of_movies,
                 null,
                 null,
                 null);
+    }
+
+    private Uri getUri(Bundle args) {
+        args = getArguments();
+        if (args != null) {
+            return args.getParcelable(DETAIL_DATA_URI);
+        } else {
+            return getActivity().getIntent().getData();
+        }
     }
 
     @Override
@@ -167,6 +173,18 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
             final FireMissilesDialogFragment dialog = new FireMissilesDialogFragment();
             dialog.setArguments(bundle);
             dialog.show(getActivity().getSupportFragmentManager(), "Videos_name");
+        }
+        else if (fetched_data != null && mode == UtilityMovieData.REQUEST_REVIEWS) {
+            TextView textReviewsNumber = (TextView) getActivity().findViewById(R.id.numberOfReviews);
+            Button reviewsButton = (Button) getActivity().findViewById(R.id.reviews_button);
+            if (fetched_data.length == 1) {
+                textReviewsNumber.setText("("+String.valueOf(fetched_data.length)+")");
+                reviewsButton.setText(getString(R.string.reviews_button_single));
+            }else{
+                textReviewsNumber.setText("("+String.valueOf(fetched_data.length)+")");
+                reviewsButton.setText(getString(R.string.reviews_button));
+            }
+            getActivity().getContentResolver().bulkInsert(MoviesContract.ReviewsEntry.CONTENT_URI, fetched_data);
         }
 
     }

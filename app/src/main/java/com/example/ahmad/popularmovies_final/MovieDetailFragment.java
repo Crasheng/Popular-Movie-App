@@ -1,7 +1,5 @@
 package com.example.ahmad.popularmovies_final;
 
-import android.support.v4.app.Fragment;
-
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -40,6 +38,10 @@ import java.util.List;
  */
 public class MovieDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, FetchDataInternet.FetchedDataReady, View.OnClickListener {
 
+
+    private static final String RELATED_MOVIE_ID = "clicked_movie";
+    Uri uriOfClickedMovie ;
+
     public static final String DETAIL_DATA_URI = "content_uri";
     private static final int GENERAL_MOVIE_LOADER_ID = 1;
     public RatingBar movie_rating;
@@ -53,7 +55,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     public TextView numerOfReviews;
     public Button lanuchReviewsButton;
 
-    String[] projections_of_movies = {
+    final static String[] projections_of_movies = {
             MoviesContract.MoviesEntry.TABLE_NAME + "." + MoviesContract.MoviesEntry._ID,
             MoviesContract.MoviesEntry.MOV_COL_ID,
             MoviesContract.MoviesEntry.MOV_COL_TITLE,
@@ -67,15 +69,14 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     };
 
-
     public MovieDetailFragment() {
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setRetainInstance(true);
-        Uri uri = getUri(savedInstanceState);
-        String movie_id = uri.getQueryParameter(MoviesContract.MoviesEntry.MOV_COL_ID);
+        uriOfClickedMovie = getUri(savedInstanceState);
+        String movie_id = uriOfClickedMovie.getQueryParameter(MoviesContract.MoviesEntry.MOV_COL_ID);
         new FetchDataInternet(MovieDetailFragment.this, UtilityMovieData.REQUEST_REVIEWS).execute(movie_id);
         super.onCreate(savedInstanceState);
     }
@@ -205,21 +206,18 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onClick(View v) {
+        Bundle args = getArguments();
+        Uri uri = getUri(args);
+        String movie_id = uri.getQueryParameter(MoviesContract.MoviesEntry.MOV_COL_ID);
         switch (v.getId())
         {
             case R.id.reviews_button:
                 ReviewsPopupFragment reviews = new ReviewsPopupFragment();
+                args.putParcelable(RELATED_MOVIE_ID, uri);
+                reviews.setArguments(args);
                 reviews.show(getActivity().getSupportFragmentManager(), "reviews_list");
                 break;
             case R.id.video_button:
-                Uri uri;
-                Bundle args = getArguments();
-                if (args != null) {
-                    uri = args.getParcelable(DETAIL_DATA_URI);
-                } else {
-                    uri = getActivity().getIntent().getData();
-                }
-                String movie_id = uri.getQueryParameter(MoviesContract.MoviesEntry.MOV_COL_ID);
                 new FetchDataInternet(MovieDetailFragment.this, UtilityMovieData.REQUEST_MOVIE_VIDEO).execute(movie_id);
                 break;
             default:
@@ -264,8 +262,17 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     public static class ReviewsPopupFragment extends DialogFragment implements  LoaderManager.LoaderCallbacks<Cursor>{
 
+        ReviewsAdapter adapter;
+
         ListView reviews_list = null;
         final int LOADER_ID = 1;
+        Uri urioFClickedMovie;
+
+        final static String[] projections_of_reviews = {
+                MoviesContract.ReviewsEntry.TABLE_NAME + "." + MoviesContract.ReviewsEntry._ID,
+                MoviesContract.ReviewsEntry.REV_COL_AUTHOR,
+                MoviesContract.ReviewsEntry.REV_COL_CONTENT
+        };
 
         @Override
         public void setStyle(int style, @StyleRes int theme) {
@@ -281,22 +288,33 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
             View view = inflater.inflate(R.layout.reviews_fragment, null);
             builder.setView(view);
             reviews_list = (ListView) view.findViewById(R.id.reviews_list);
+            adapter = new ReviewsAdapter(getActivity(), null);
+            urioFClickedMovie = getArguments().getParcelable(RELATED_MOVIE_ID);
+            reviews_list.setAdapter(adapter);
+            getLoaderManager().initLoader(LOADER_ID,null,this);
             return builder.create();
         }
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            return null;
+            String movie_id = urioFClickedMovie.getQueryParameter(MoviesContract.MoviesEntry.MOV_COL_ID);
+            Uri uri = MoviesContract.ReviewsEntry.buildMovieReviewsUri(movie_id);
+            return new CursorLoader(getActivity(),
+                    uri,
+                    projections_of_reviews,
+                    null,
+                    null,
+                    null);
         }
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
+            adapter.swapCursor(data);
         }
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-
+            adapter.swapCursor(null);
         }
     }
 }

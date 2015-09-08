@@ -206,13 +206,14 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onClick(View v) {
-        Bundle args = getArguments();
-        Uri uri = getUri(args);
+        Bundle arguments = getArguments();
+        Uri uri = getUri(arguments);
         String movie_id = uri.getQueryParameter(MoviesContract.MoviesEntry.MOV_COL_ID);
         switch (v.getId())
         {
             case R.id.reviews_button:
                 ReviewsPopupFragment reviews = new ReviewsPopupFragment();
+                Bundle args = new Bundle();
                 args.putParcelable(RELATED_MOVIE_ID, uri);
                 reviews.setArguments(args);
                 reviews.show(getActivity().getSupportFragmentManager(), "reviews_list");
@@ -283,7 +284,6 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.reviews_button);
             LayoutInflater inflater = getActivity().getLayoutInflater();
             View view = inflater.inflate(R.layout.reviews_fragment, null);
             builder.setView(view);

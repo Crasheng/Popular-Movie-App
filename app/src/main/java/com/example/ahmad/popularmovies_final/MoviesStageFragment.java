@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -36,6 +37,8 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
 
     //LOG AN EVENT.
     public static final String TAG = "check_populating";
+    private static final String POPULAR_MOVIES = "Popular Movies";
+    private static final String MOST_RATED_MOVIES = "Most Rated Movies";
 
     private static boolean INTERNET_STATUE_OPENED = true;
 
@@ -115,6 +118,9 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
 
         GridView gridview = (GridView) view.findViewById(R.id.grid_list);
         gridview.setAdapter(movie_adapter_data);
+
+
+
         return view;
     }
 
@@ -161,6 +167,16 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
         inflater.inflate(R.menu.menu_main, menu);
         //must be called after these items added to the menu.
         menu.setGroupCheckable(R.id.menu_group, true, true);
+
+        //This piece of code for setting the title of Activity
+        //depends on preferred movies sort
+        MenuItem pop_mov_item = menu.findItem(R.id.pop_movies);
+        MenuItem most_rated_item = menu.findItem(R.id.most_rated);
+        if (pop_mov_item.isChecked())
+            getActivity().setTitle(POPULAR_MOVIES);
+        else if (most_rated_item.isChecked()) {
+            getActivity().setTitle(MOST_RATED_MOVIES);
+        }
     }
 
     @Override
@@ -169,12 +185,14 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
             case R.id.pop_movies:
                 item.setChecked(true);
                 arrangement_flag = MoviesEntry.MOV_COL_POPULARITY+"."+MoviesEntry.SORT_ORDER.trim();
+                getActivity().setTitle(POPULAR_MOVIES);
                 new FetchDataInternet(this, UtilityMovieData.REQUEST_MOVIES).execute(arrangement_flag);
                 getLoaderManager().restartLoader(CUR_LOADER_ID, null, this);
                 return true;
             case R.id.most_rated:
                 item.setChecked(true);
                 arrangement_flag = MoviesEntry.MOV_COL_VOTE_COUNTS+"."+MoviesEntry.SORT_ORDER.trim();
+                getActivity().setTitle(MOST_RATED_MOVIES);
                 new FetchDataInternet(this, UtilityMovieData.REQUEST_MOVIES).execute(arrangement_flag);
                 getLoaderManager().restartLoader(CUR_LOADER_ID, null, this);
                 return true;

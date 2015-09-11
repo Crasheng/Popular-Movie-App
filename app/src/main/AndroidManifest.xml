@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ahmad.popularmovies_final" >
+    package="com.example.ahmad.popularmovies_final">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -9,11 +9,12 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
+            android:launchMode="singleTop"
             android:name=".MoviesStageActivity"
             android:configChanges="orientation|screenSize"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,7 +23,13 @@
         </activity>
         <activity
             android:name=".MovieDetailActivity"
-            android:label="@string/title_activity_movie_detail" />
+            android:label="@string/title_activity_movie_detail"
+            android:parentActivityName=".MoviesStageActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ahmad.popularmovies_final.MoviesStageActivity" />
+        </activity>
 
         <provider
             android:name=".Data.MovieProvider"
@@ -30,8 +37,7 @@
 
         <activity
             android:name=".TestActivity"
-            android:label="@string/title_activity_test" >
-        </activity>
+            android:label="@string/title_activity_test"></activity>
     </application>
 
 </manifest>

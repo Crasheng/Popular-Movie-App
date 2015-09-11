@@ -148,7 +148,9 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         movie_release_date.setText("Release Date: " + data.getString(data.getColumnIndex(MoviesContract.MoviesEntry.MOV_COL_RELEASE_DATE)));
         movie_overview.setText(data.getString(data.getColumnIndex(MoviesContract.MoviesEntry.MOV_COL_OVERVIEW)));
         movie_original_title.setText(data.getString(data.getColumnIndex(MoviesContract.MoviesEntry.MOV_COL_TITLE)));
-//        }
+
+        //set Title of host activity to movie name.
+        getActivity().setTitle(data.getString(data.getColumnIndex(MoviesContract.MoviesEntry.MOV_COL_TITLE)));
     }
 
     @Override
@@ -171,7 +173,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
             Bundle bundle = new Bundle();
             bundle.putStringArrayList("name", name_array);
             bundle.putStringArrayList("key", key_array);
-            final FireMissilesDialogFragment dialog = new FireMissilesDialogFragment();
+            final AvailableTrailersFragment dialog = new AvailableTrailersFragment();
             dialog.setArguments(bundle);
             dialog.show(getActivity().getSupportFragmentManager(), "Videos_name");
         }
@@ -226,7 +228,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         }
     }
 
-    public static class FireMissilesDialogFragment extends DialogFragment {
+    public static class AvailableTrailersFragment extends DialogFragment {
 
         ArrayList<String> videos_name = null;
         ArrayList<String> videos_key = null;
@@ -267,7 +269,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
         ListView reviews_list = null;
         final int LOADER_ID = 1;
-        Uri urioFClickedMovie;
+        Uri uriOfClickedMovie;
 
         final static String[] projections_of_reviews = {
                 MoviesContract.ReviewsEntry.TABLE_NAME + "." + MoviesContract.ReviewsEntry._ID,
@@ -289,15 +291,19 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
             builder.setView(view);
             reviews_list = (ListView) view.findViewById(R.id.reviews_list);
             adapter = new ReviewsAdapter(getActivity(), null);
-            urioFClickedMovie = getArguments().getParcelable(RELATED_MOVIE_ID);
             reviews_list.setAdapter(adapter);
+
+            //fetch the movie id from bundle.
+            uriOfClickedMovie = getArguments().getParcelable(RELATED_MOVIE_ID);
+
+            //init the loader.
             getLoaderManager().initLoader(LOADER_ID,null,this);
             return builder.create();
         }
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            String movie_id = urioFClickedMovie.getQueryParameter(MoviesContract.MoviesEntry.MOV_COL_ID);
+            String movie_id = uriOfClickedMovie.getQueryParameter(MoviesContract.MoviesEntry.MOV_COL_ID);
             Uri uri = MoviesContract.ReviewsEntry.buildMovieReviewsUri(movie_id);
             return new CursorLoader(getActivity(),
                     uri,

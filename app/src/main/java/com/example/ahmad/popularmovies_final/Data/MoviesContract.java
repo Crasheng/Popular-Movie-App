@@ -23,6 +23,10 @@ public class MoviesContract {
     //Name of the review table
     public static final String PATH_REVIEW = "review";
 
+    //Name of the favorite table
+    public static final String PATH_FAVORITE = "favorite";
+
+
 
     //for changing operations
     public static final int MOVIES = 100;
@@ -32,6 +36,8 @@ public class MoviesContract {
     public static final int MOVIE_DETAIL = 102;
     //for changing operations on review table
     public static final int REVIEWS = 300;
+    //for change operations on favorite table
+    public static final int FAVORITES = 400;
 
 
     public static final class MoviesEntry implements BaseColumns {
@@ -114,6 +120,24 @@ public class MoviesContract {
         public static Uri buildReviewWithMovieId(long movie_id)
         {
             return ContentUris.withAppendedId(CONTENT_URI, movie_id);
+        }
+    }
+
+    public static final class FavoriteEntry implements BaseColumns{
+
+        public static Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_FAVORITE).build();
+
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITE;
+
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.ANY_CURSOR_ITEM_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITE;
+
+        public static final String TABLE_NAME = PATH_FAVORITE;
+
+        public static final String RELATED_MOVIE_COL = "related_movie";
+
+        public static Uri buildFavoriteUri()
+        {
+            return CONTENT_URI;
         }
     }
 }

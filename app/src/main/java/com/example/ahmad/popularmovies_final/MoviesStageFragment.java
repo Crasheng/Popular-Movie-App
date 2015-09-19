@@ -120,7 +120,6 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
         gridview.setAdapter(movie_adapter_data);
 
 
-
         return view;
     }
 

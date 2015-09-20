@@ -29,7 +29,7 @@
                 android:layout_alignWithParentIfMissing="false"
                 android:layout_centerVertical="true"
                 android:alpha="0.8"
-                android:background="@drawable/statelist_selector"
+                android:background="@drawable/fav_button_style"
                 android:src="@drawable/youtube" />
 
         </RelativeLayout>
@@ -71,7 +71,6 @@
                 style="?android:attr/ratingBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/poster_image"
                 android:layout_alignLeft="@+id/movie_release_date"
                 android:layout_alignStart="@+id/movie_release_date"
                 android:layout_below="@+id/movie_release_date"
@@ -87,15 +86,15 @@
                 android:layout_toRightOf="@+id/movie_rating_stars" />
 
             <ImageButton
+                android:clickable="true"
                 android:src="@drawable/default_fav"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="?attr/borderlessButtonStyle"
-                android:text="Favourite"
-                android:id="@+id/button"
-                android:layout_alignBottom="@+id/movie_rating_stars"
-                android:layout_alignRight="@+id/vote_ratio"
-                android:layout_alignEnd="@+id/vote_ratio" />
+                android:id="@+id/fav_button"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/fav_button_style"
+                android:layout_alignBottom="@id/poster_image"/>
         </RelativeLayout>
 
         <TextView

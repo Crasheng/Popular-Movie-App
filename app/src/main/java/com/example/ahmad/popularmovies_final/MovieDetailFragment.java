@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.net.nsd.NsdManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.util.Log;
 
 import com.example.ahmad.popularmovies_final.Data.MoviesContract;
 import com.squareup.picasso.Picasso;
@@ -40,6 +42,13 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
 
     private static final String RELATED_MOVIE_ID = "clicked_movie";
+    private static final Integer FAV_BUTTON_ACTIVATED = 1;
+    private static final Integer FAV_BUTTON_NOT_ACTIVATED = 0;
+    private static final String TAG = "fav_button";
+    private static Integer fav_button_mode;
+    private boolean favorite_movie;
+
+
     Uri uriOfClickedMovie ;
 
     public static final String DETAIL_DATA_URI = "content_uri";
@@ -52,8 +61,10 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     public TextView movie_release_date;
     public TextView movie_original_title;
     public ImageButton video_button;
-    public TextView numerOfReviews;
+    public TextView numberOfReviews;
     public Button lanuchReviewsButton;
+    public ImageButton fav_button;
+    String movie_id;
 
     final static String[] projections_of_movies = {
             MoviesContract.MoviesEntry.TABLE_NAME + "." + MoviesContract.MoviesEntry._ID,
@@ -76,7 +87,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setRetainInstance(true);
         uriOfClickedMovie = getUri(savedInstanceState);
-        String movie_id = uriOfClickedMovie.getQueryParameter(MoviesContract.MoviesEntry.MOV_COL_ID);
+        movie_id = uriOfClickedMovie.getQueryParameter(MoviesContract.MoviesEntry.MOV_COL_ID);
         new FetchDataInternet(MovieDetailFragment.this, UtilityMovieData.REQUEST_REVIEWS).execute(movie_id);
         super.onCreate(savedInstanceState);
     }
@@ -93,6 +104,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         //Register on click list. to these buttons
         lanuchReviewsButton.setOnClickListener(this);
         video_button.setOnClickListener(this);
+        fav_button.setOnClickListener(this);
 
         return view;
     }
@@ -100,6 +112,21 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         getLoaderManager().initLoader(GENERAL_MOVIE_LOADER_ID, savedInstanceState, this);
+        if (isItFavourite(movie_id)  == true) {
+            Log.d(TAG, "onActivityCreated : it is a favourite movie");
+            //You have to check if that movie in Favourite database or not!
+            //then you apply the suitable Tag to it.
+            fav_button.setImageResource(R.drawable.fav_true);
+            fav_button.setTag(FAV_BUTTON_ACTIVATED);
+
+        }
+        else
+        {
+            Log.d(TAG, "onActivityCreated : it is not there");
+            fav_button.setImageResource(R.drawable.default_fav);
+            fav_button.setTag(FAV_BUTTON_NOT_ACTIVATED);
+
+        }
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -194,7 +221,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
 
     private void setLayoutFields(View view) {
-        numerOfReviews = (TextView) view.findViewById(R.id.numberOfReviews);
+        numberOfReviews = (TextView) view.findViewById(R.id.numberOfReviews);
         lanuchReviewsButton = (Button) view.findViewById(R.id.reviews_button);
         movie_rating = (RatingBar) view.findViewById(R.id.movie_rating_stars);
         movie_rating_ratio = (TextView) view.findViewById(R.id.vote_ratio);
@@ -204,6 +231,8 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         movie_release_date = (TextView) view.findViewById(R.id.movie_release_date);
         movie_original_title = (TextView) view.findViewById(R.id.movie_original_name);
         video_button = (ImageButton) view.findViewById(R.id.video_button);
+        fav_button = (ImageButton) view.findViewById(R.id.fav_button);
+
     }
 
     @Override
@@ -223,9 +252,37 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
             case R.id.video_button:
                 new FetchDataInternet(MovieDetailFragment.this, UtilityMovieData.REQUEST_MOVIE_VIDEO).execute(movie_id);
                 break;
+            case R.id.fav_button:
+                ContentValues fav_movie = new ContentValues();
+                fav_movie.put(MoviesContract.FavouriteEntry.RELATED_MOVIE_COL, Integer.valueOf(movie_id));
+                if ( fav_button.isPressed() == true && fav_button.getTag().equals(FAV_BUTTON_NOT_ACTIVATED)) {
+                    fav_button.setImageResource(R.drawable.fav_true);
+                    fav_button.setTag(FAV_BUTTON_ACTIVATED);
+
+                    Uri c = getActivity().getContentResolver().insert(MoviesContract.FavouriteEntry.CONTENT_URI, fav_movie);
+                    Log.d(TAG, "onClick insert this movie"  + c.toString());
+                }
+                else
+                {
+                    fav_button.setImageResource(R.drawable.default_fav);
+                    fav_button.setTag(FAV_BUTTON_NOT_ACTIVATED);
+                    int c = getActivity().getContentResolver().delete(MoviesContract.FavouriteEntry.CONTENT_URI, MoviesContract.FavouriteEntry.RELATED_MOVIE_COL + "=" + movie_id, null);
+                    Log.d(TAG, "onClick deleted movie " + String.valueOf(c));
+                }
+                break;
             default:
                 throw new UnsupportedOperationException("Wrong View");
         }
+    }
+
+    boolean isItFavourite(String movie_id)
+    {
+        Cursor c = getActivity().getContentResolver().query(MoviesContract.FavouriteEntry.CONTENT_URI, new String[]{MoviesContract.FavouriteEntry.RELATED_MOVIE_COL},
+                MoviesContract.FavouriteEntry.RELATED_MOVIE_COL,
+                new String[] { movie_id}, null);
+        Log.d(TAG, "isItFavourite cursor " + c.getCount());
+        boolean there = !c.moveToFirst();
+        return there;
     }
 
     public static class AvailableTrailersFragment extends DialogFragment {

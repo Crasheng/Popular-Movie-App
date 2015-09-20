@@ -40,6 +40,7 @@ public class MoviesContract {
     public static final int FAVOURITE = 400;
 
 
+
     public static final class MoviesEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =

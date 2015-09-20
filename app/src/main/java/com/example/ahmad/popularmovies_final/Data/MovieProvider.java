@@ -106,14 +106,26 @@ public class MovieProvider extends ContentProvider {
                 }
                 break;
             case  MoviesContract.FAVOURITE:
+                String related_movie_id = uri.getQueryParameter(MoviesContract.FavouriteEntry.RELATED_MOVIE_COL);
                 db = dbHelper.getReadableDatabase();
-                c = db.query(MoviesContract.FavouriteEntry.TABLE_NAME,
-                        projection,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null);
+                if (related_movie_id == null) {
+                    c = db.query(MoviesContract.FavouriteEntry.TABLE_NAME,
+                            projection,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null);
+                }
+                else
+                    c = db.query(MoviesContract.FavouriteEntry.TABLE_NAME,
+                            projection,
+                            selection,
+                            selectionArgs,
+                            null,
+                            null,
+                            null);
+
                 break;
             default:
                 throw new UnsupportedOperationException("Invalid URI");
@@ -161,7 +173,7 @@ public class MovieProvider extends ContentProvider {
                 }
                 break;
             case MoviesContract.FAVOURITE:
-                row_id = db.insertWithOnConflict(MoviesContract.FavouriteEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+                row_id = db.insertWithOnConflict(MoviesContract.FavouriteEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
                 if (row_id < 0) {
                     throw new android.database.SQLException("Failed to insert row into" + uri);
                 }

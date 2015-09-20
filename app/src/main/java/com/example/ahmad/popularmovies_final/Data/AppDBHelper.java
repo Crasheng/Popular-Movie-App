@@ -49,7 +49,7 @@ public class AppDBHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_FAVOURITE_TABLE = " CREATE TABLE " + FavouriteEntry.TABLE_NAME +
                 "(" + FavouriteEntry._ID + " INTEGER PRIMARY KEY,  " +
-                FavouriteEntry.RELATED_MOVIE_COL + " INTEGER NOT NULL " + ");";
+                FavouriteEntry.RELATED_MOVIE_COL + " INTEGER UNIQUE NOT NULL " + ");";
 
         db.execSQL(SQL_CREATE_MOVIES_TABLE);
         db.execSQL(SQL_CREATE_REVIEW_TABLE);

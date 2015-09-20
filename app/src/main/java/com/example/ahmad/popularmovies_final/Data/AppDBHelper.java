@@ -3,7 +3,7 @@ package com.example.ahmad.popularmovies_final.Data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import com.example.ahmad.popularmovies_final.Data.MoviesContract.FavoriteEntry;
+import com.example.ahmad.popularmovies_final.Data.MoviesContract.FavouriteEntry;
 import com.example.ahmad.popularmovies_final.Data.MoviesContract.MoviesEntry;
 import com.example.ahmad.popularmovies_final.Data.MoviesContract.ReviewsEntry;
 
@@ -34,7 +34,7 @@ public class AppDBHelper extends SQLiteOpenHelper {
                 MoviesEntry.MOV_COL_POPULARITY     +" REAL NOT NULL, "+
                 MoviesEntry.MOV_COL_VOTE_COUNTS    +" INTEGER NOT NULL,"+
                 MoviesEntry.MOV_COL_VOTE_AVE       +" REAL NOT NULL,"+
-                MoviesEntry.MOV_COL_FAVORITE       +" BOOLEAN NOT NULL DEFAULT 0);";
+                MoviesEntry.MOV_COL_FAVOURITE +" BOOLEAN NOT NULL DEFAULT 0);";
 
 
 
@@ -47,13 +47,13 @@ public class AppDBHelper extends SQLiteOpenHelper {
 //                "FOREIGN KEY("+ ReviewsEntry.RELATED_MOVIE +") REFERENCES "+ MoviesEntry.TABLE_NAME +" ( "+ MoviesEntry.MOV_COL_ID +"));";
 
 
-        final String SQL_CREATE_FAVORITE_TABLE = " CREATE TABLE " + FavoriteEntry.TABLE_NAME +
-                "(" + FavoriteEntry._ID + " INTEGER PRIMARY KEY,  " +
-                FavoriteEntry.RELATED_MOVIE_COL + " INTEGER NOT NULL " + ");";
+        final String SQL_CREATE_FAVOURITE_TABLE = " CREATE TABLE " + FavouriteEntry.TABLE_NAME +
+                "(" + FavouriteEntry._ID + " INTEGER PRIMARY KEY,  " +
+                FavouriteEntry.RELATED_MOVIE_COL + " INTEGER NOT NULL " + ");";
 
         db.execSQL(SQL_CREATE_MOVIES_TABLE);
         db.execSQL(SQL_CREATE_REVIEW_TABLE);
-        db.execSQL(SQL_CREATE_FAVORITE_TABLE);
+        db.execSQL(SQL_CREATE_FAVOURITE_TABLE);
 
     }
 
@@ -61,7 +61,7 @@ public class AppDBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + MoviesEntry.TABLE_NAME + ";");
         db.execSQL("DROP TABLE IF EXISTS " + ReviewsEntry.TABLE_NAME + ";");
-        db.execSQL("DROP TABLE IF EXISTS " + FavoriteEntry.TABLE_NAME + ";");
+        db.execSQL("DROP TABLE IF EXISTS " + FavouriteEntry.TABLE_NAME + ";");
         onCreate(db);
     }
 }

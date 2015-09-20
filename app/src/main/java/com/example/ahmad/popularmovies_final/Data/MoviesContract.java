@@ -24,7 +24,7 @@ public class MoviesContract {
     public static final String PATH_REVIEW = "review";
 
     //Name of the favorite table
-    public static final String PATH_FAVORITE = "favorite";
+    public static final String PATH_FAVOURITE = "favourite";
 
 
 
@@ -37,7 +37,7 @@ public class MoviesContract {
     //for changing operations on review table
     public static final int REVIEWS = 300;
     //for change operations on favorite table
-    public static final int FAVORITES = 400;
+    public static final int FAVOURITE = 400;
 
 
     public static final class MoviesEntry implements BaseColumns {
@@ -62,7 +62,7 @@ public class MoviesContract {
         public static final String MOV_COL_ID = "umovie_id";
         public static final String MOV_COL_TITLE = "title";
         public static final String MOV_COL_OVERVIEW = "overview";
-        public static final String MOV_COL_FAVORITE = "favorite";
+        public static final String MOV_COL_FAVOURITE = "favorite";
         public static final String MOV_COL_POPULARITY = "popularity";
         public static final String MOV_COL_VOTE_COUNTS = "vote_count";
         public static final String MOV_COL_ORIGINAL_TITLE = "original_title";
@@ -123,15 +123,15 @@ public class MoviesContract {
         }
     }
 
-    public static final class FavoriteEntry implements BaseColumns{
+    public static final class FavouriteEntry implements BaseColumns{
 
-        public static Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_FAVORITE).build();
+        public static Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_FAVOURITE).build();
 
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITE;
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVOURITE;
 
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.ANY_CURSOR_ITEM_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITE;
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.ANY_CURSOR_ITEM_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVOURITE;
 
-        public static final String TABLE_NAME = PATH_FAVORITE;
+        public static final String TABLE_NAME = PATH_FAVOURITE;
 
         public static final String RELATED_MOVIE_COL = "related_movie";
 

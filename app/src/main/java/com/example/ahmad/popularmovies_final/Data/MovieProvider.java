@@ -17,7 +17,7 @@ import com.example.ahmad.popularmovies_final.MoviesStageFragment;
 
 
 //TODO - DONE!
-//FAVORITE TABLE
+//FAVOURITE TABLE
     //INSERT +
     //BULK INSERT -
     //QUERY +
@@ -105,9 +105,9 @@ public class MovieProvider extends ContentProvider {
                             null);
                 }
                 break;
-            case  MoviesContract.FAVORITES:
+            case  MoviesContract.FAVOURITE:
                 db = dbHelper.getReadableDatabase();
-                c = db.query(MoviesContract.FavoriteEntry.TABLE_NAME,
+                c = db.query(MoviesContract.FavouriteEntry.TABLE_NAME,
                         projection,
                         null,
                         null,
@@ -135,8 +135,8 @@ public class MovieProvider extends ContentProvider {
                 return MoviesContract.ReviewsEntry.CONTENT_TYPE;
             case MoviesContract.MOVIE_DETAIL:
                 return MoviesEntry.CONTENT_ITEM_TYPE;
-            case MoviesContract.FAVORITES:
-                return MoviesContract.FavoriteEntry.CONTENT_TYPE;
+            case MoviesContract.FAVOURITE:
+                return MoviesContract.FavouriteEntry.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("InValid Uri");
         }
@@ -160,8 +160,8 @@ public class MovieProvider extends ContentProvider {
                     throw new android.database.SQLException("Failed to insert row into" + uri);
                 }
                 break;
-            case MoviesContract.FAVORITES:
-                row_id = db.insertWithOnConflict(MoviesContract.FavoriteEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+            case MoviesContract.FAVOURITE:
+                row_id = db.insertWithOnConflict(MoviesContract.FavouriteEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
                 if (row_id < 0) {
                     throw new android.database.SQLException("Failed to insert row into" + uri);
                 }
@@ -186,8 +186,8 @@ public class MovieProvider extends ContentProvider {
             case MoviesContract.REVIEWS:
                 deleted_rows = db.delete(MoviesContract.ReviewsEntry.TABLE_NAME, selection, selectionArgs);
                 break;
-            case MoviesContract.FAVORITES:
-                deleted_rows = db.delete(MoviesContract.FavoriteEntry.TABLE_NAME, selection, selectionArgs);
+            case MoviesContract.FAVOURITE:
+                deleted_rows = db.delete(MoviesContract.FavouriteEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new android.database.SQLException("Invalid Deletion process of Uri : " + uri );
@@ -210,8 +210,8 @@ public class MovieProvider extends ContentProvider {
             case MoviesContract.REVIEWS:
                 updated_rows = db.update(ReviewsEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
-            case MoviesContract.FAVORITES:
-                updated_rows = db.update(MoviesContract.FavoriteEntry.TABLE_NAME, values, selection, selectionArgs);
+            case MoviesContract.FAVOURITE:
+                updated_rows = db.update(MoviesContract.FavouriteEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:
                 throw new android.database.SQLException("Invalid Deletion process of Uri : " + uri );
@@ -294,7 +294,7 @@ public class MovieProvider extends ContentProvider {
         matcher.addURI(authority, "/"+MoviesContract.PATH_MOVIE, MoviesContract.MOVIES);
         matcher.addURI(authority, "/"+MoviesContract.PATH_MOVIE + "/*", MoviesContract.MOVIES_STAGE_SORT);
         matcher.addURI(authority, "/"+MoviesContract.PATH_REVIEW, MoviesContract.REVIEWS);
-        matcher.addURI(authority, "/"+MoviesContract.PATH_FAVORITE, MoviesContract.FAVORITES);
+        matcher.addURI(authority, "/"+MoviesContract.PATH_FAVOURITE, MoviesContract.FAVOURITE);
         return matcher;
 
 

@@ -7,13 +7,10 @@ import android.util.Log;
 
 import com.example.ahmad.popularmovies_final.Data.MoviesContract;
 import com.example.ahmad.popularmovies_final.Data.MoviesContract.MoviesEntry;
-import com.example.ahmad.popularmovies_final.POJOs.MovieData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 /**
  * Created by Ahmad on 7/9/2015.
@@ -51,7 +48,7 @@ public class UtilityMovieData {
                 movies_values[i].put(MoviesEntry.MOV_COL_POPULARITY, movie.getDouble("popularity"));
                 movies_values[i].put(MoviesEntry.MOV_COL_VOTE_COUNTS, movie.getInt("vote_count"));
                 movies_values[i].put(MoviesEntry.MOV_COL_VOTE_AVE, movie.getDouble("vote_average"));
-                movies_values[i].put(MoviesEntry.MOV_COL_FAVORITE, 0);
+                movies_values[i].put(MoviesEntry.MOV_COL_FAVOURITE, 0);
             }
 
         }catch (JSONException e)

@@ -60,7 +60,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
             MoviesContract.MoviesEntry.MOV_COL_ID,
             MoviesContract.MoviesEntry.MOV_COL_TITLE,
             MoviesContract.MoviesEntry.MOV_COL_OVERVIEW,
-            MoviesContract.MoviesEntry.MOV_COL_FAVORITE,
+            MoviesContract.MoviesEntry.MOV_COL_FAVOURITE,
             MoviesContract.MoviesEntry.MOV_COL_ORIGINAL_TITLE,
             MoviesContract.MoviesEntry.MOV_COL_POSTER,
             MoviesContract.MoviesEntry.MOV_COL_BACKDROP,

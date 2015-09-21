@@ -12,6 +12,10 @@
         <item
             android:id="@+id/most_rated"
             android:title="@string/rated_movies" />
+
+        <item
+            android:id="@+id/fav_movies"
+            android:title="@string/favourite" />
     </group>
     <item
         android:id="@+id/action_settings"
@@ -22,5 +26,5 @@
         android:id="@+id/refresh"
         android:orderInCategory="99"
         android:title="@string/refresh"
-        android:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"/>
 </menu>

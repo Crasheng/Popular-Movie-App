@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.net.nsd.NsdManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,6 +16,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +26,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.util.Log;
 
 import com.example.ahmad.popularmovies_final.Data.MoviesContract;
 import com.squareup.picasso.Picasso;
@@ -112,6 +111,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         getLoaderManager().initLoader(GENERAL_MOVIE_LOADER_ID, savedInstanceState, this);
+        Log.d(TAG, "onActivityCreated : " + movie_id);
         if (isItFavourite(movie_id)  == true) {
             Log.d(TAG, "onActivityCreated : it is a favourite movie");
             //You have to check if that movie in Favourite database or not!
@@ -277,11 +277,14 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     boolean isItFavourite(String movie_id)
     {
-        Cursor c = getActivity().getContentResolver().query(MoviesContract.FavouriteEntry.CONTENT_URI, new String[]{MoviesContract.FavouriteEntry.RELATED_MOVIE_COL},
-                MoviesContract.FavouriteEntry.RELATED_MOVIE_COL,
-                new String[] { movie_id}, null);
+        Log.d(TAG, "isItFavourite : " + String.valueOf(movie_id));
+
+        Uri uriWithParameter = MoviesContract.FavouriteEntry.CONTENT_URI.buildUpon().appendQueryParameter(MoviesContract.FavouriteEntry.RELATED_MOVIE_COL, movie_id).build();
+
+        Cursor c = getActivity().getContentResolver().query(uriWithParameter, new String[] {MoviesContract.FavouriteEntry.RELATED_MOVIE_COL}, null, null, null, null);
+
         Log.d(TAG, "isItFavourite cursor " + c.getCount());
-        boolean there = !c.moveToFirst();
+        boolean there = c.moveToFirst();
         return there;
     }
 

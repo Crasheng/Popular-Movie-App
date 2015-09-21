@@ -39,6 +39,7 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
     public static final String TAG = "check_populating";
     private static final String POPULAR_MOVIES = "Popular Movies";
     private static final String MOST_RATED_MOVIES = "Most Rated Movies";
+    private static final String FAVOURITES = "favourites" ;
 
     private static boolean INTERNET_STATUE_OPENED = true;
 
@@ -54,7 +55,7 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
 
     //Column that is in need.
     private static String[] projections ={
-            MoviesEntry._ID,
+            MoviesEntry.TABLE_NAME + "." + MoviesEntry._ID,
             MoviesEntry.MOV_COL_ID,
             MoviesEntry.MOV_COL_POSTER
     };
@@ -178,6 +179,9 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
         }
     }
 
+
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -195,6 +199,11 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
                 new FetchDataInternet(this, UtilityMovieData.REQUEST_MOVIES).execute(arrangement_flag);
                 getLoaderManager().restartLoader(CUR_LOADER_ID, null, this);
                 return true;
+            case R.id.fav_movies:
+                item.setChecked(true);
+                arrangement_flag = FAVOURITES;
+                getActivity().setTitle(FAVOURITES);
+                getLoaderManager().restartLoader(CUR_LOADER_ID, null, this);
             case R.id.refresh:
                 INTERNET_STATUE_OPENED = isNetworkAvailable(getActivity());
                 return true;
@@ -210,10 +219,15 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
         if (arrangement_flag.equals("popularity.DESC")) {
             populate_stage_uri = MoviesEntry.buildMovieWithSortUri(MoviesEntry.MOV_COL_POPULARITY + MoviesEntry.SORT_ORDER);
         }
-        else {
+        else if (arrangement_flag.equals(FAVOURITES) ){
+            populate_stage_uri = MoviesContract.FavouriteEntry.CONTENT_URI;
+        }
+        else
+        {
             populate_stage_uri = MoviesEntry.buildMovieWithSortUri(MoviesEntry.MOV_COL_VOTE_COUNTS + MoviesEntry.SORT_ORDER);
         }
 
+        Log.d(TAG, "onCreateLoader  : " + populate_stage_uri.toString());
         return new CursorLoader(getActivity(),populate_stage_uri,projections,
                 null,
                 null,

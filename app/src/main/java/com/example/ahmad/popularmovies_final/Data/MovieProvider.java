@@ -48,6 +48,12 @@ public class MovieProvider extends ContentProvider {
                 ReviewsEntry.TABLE_NAME);
     }
 
+    final static SQLiteQueryBuilder sqlFavouriteBuilderQuery = new SQLiteQueryBuilder();
+//    static
+//    {
+//        sqlFavouriteBuilderQuery.setTables(MoviesContract.FavouriteEntry.TABLE_NAME);
+//    }
+
     @Override
     public boolean onCreate() {
         dbHelper  = new AppDBHelper(getContext());
@@ -107,24 +113,31 @@ public class MovieProvider extends ContentProvider {
                 break;
             case  MoviesContract.FAVOURITE:
                 String related_movie_id = uri.getQueryParameter(MoviesContract.FavouriteEntry.RELATED_MOVIE_COL);
+                Log.d("fav_button", "query :  " + String.valueOf(related_movie_id));
+                sqlFavouriteBuilderQuery.setTables(MoviesContract.FavouriteEntry.TABLE_NAME);
                 db = dbHelper.getReadableDatabase();
-                if (related_movie_id == null) {
-                    c = db.query(MoviesContract.FavouriteEntry.TABLE_NAME,
+                if (related_movie_id != null) {
+                    c = sqlFavouriteBuilderQuery.query(db,
                             projection,
-                            null,
-                            null,
+                            MoviesContract.FavouriteEntry.RELATED_MOVIE_COL + " = ? ",
+                            new String[] {related_movie_id},
                             null,
                             null,
                             null);
+
+                    Log.d("fav_button", "query : c : " + c.getCount());
                 }
-                else
-                    c = db.query(MoviesContract.FavouriteEntry.TABLE_NAME,
+                else {
+                    sqlFavouriteBuilderQuery.setTables(MoviesEntry.TABLE_NAME + " join " + MoviesContract.FavouriteEntry.TABLE_NAME + " on " + MoviesEntry.MOV_COL_ID  + " = " + MoviesContract.FavouriteEntry.RELATED_MOVIE_COL);
+                    db = dbHelper.getReadableDatabase();
+                    c = sqlFavouriteBuilderQuery.query(db,
                             projection,
                             selection,
                             selectionArgs,
                             null,
                             null,
                             null);
+                }
 
                 break;
             default:
@@ -206,6 +219,8 @@ public class MovieProvider extends ContentProvider {
         }
         if (deleted_rows != 0)
             getContext().getContentResolver().notifyChange(uri,null);
+        notifyAll();
+
         return deleted_rows;
     }
 

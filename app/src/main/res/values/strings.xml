@@ -15,4 +15,5 @@
     <string name="title_video_dialog">Choose Prefered Video</string>
     <string name="reviews_button">Reviews</string>
     <string name="reviews_button_single">Review</string>
+    <string name="favourite">Favourites</string>
 </resources>

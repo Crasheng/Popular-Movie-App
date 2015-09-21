@@ -12,7 +12,7 @@ import com.example.ahmad.popularmovies_final.Data.MoviesContract.ReviewsEntry;
  */
 public class AppDBHelper extends SQLiteOpenHelper {
 
-    public static final int DB_VERSION = 9;
+    public static final int DB_VERSION = 10;
     public static final String DATABASE_NAME = "movie.db";
 
     public AppDBHelper(Context context){

@@ -19,7 +19,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -45,6 +44,7 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
 
     //FLAG TO KNOW WHICH DEVICE WORKING RIGHT NOW.
 //    private static boolean TABLET_FLAG = false;
+
 
 
     //Custom Adapter for movies data
@@ -112,6 +112,22 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+/*        RESTAdapter adapter = new RESTAdapter("http://api.themoviedb.org/");
+        Call<MoviesResponse> movies_response = adapter.getInternetGate().getMoviesToStage("sort_type", "api_key");
+        movies_response.enqueue(new retrofit.Callback<MoviesResponse>() {
+            @Override
+            public void onResponse(Response<MoviesResponse> response) {
+                ContentValues[] movies_data = UtilityMovieData.makeMoviesDataBullk(response.body());
+                getActivity().getContentResolver().bulkInsert(MoviesEntry.CONTENT_URI, movies_data);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });*/
+
+
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         //Pass the cursor null, because it does not exist yet,
@@ -119,6 +135,7 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
 
         GridView gridview = (GridView) view.findViewById(R.id.grid_list);
         gridview.setAdapter(movie_adapter_data);
+
 
 
         return view;

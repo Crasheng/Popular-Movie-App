@@ -7,10 +7,14 @@ import android.util.Log;
 
 import com.example.ahmad.popularmovies_final.Data.MoviesContract;
 import com.example.ahmad.popularmovies_final.Data.MoviesContract.MoviesEntry;
+import com.example.ahmad.popularmovies_final.POJOs.Movies.MoviesResponse;
+import com.example.ahmad.popularmovies_final.POJOs.Movies.MoviesResults;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 /**
  * Created by Ahmad on 7/9/2015.
@@ -25,6 +29,30 @@ public class UtilityMovieData {
     public static final String VIDEO_KEY = "key";
     public static final String VIDEO_NAME = "name";
     public static final String VIDEO_WEBSITE = "site";
+
+
+    public static ContentValues[] makeMoviesDataBullk(MoviesResponse mresponse)
+    {
+        ContentValues[] movies_values = null;
+        List<MoviesResults> movies =  mresponse.getResults();
+        int length = movies.size();
+        for (int i = 0; i < length; i++) {
+            MoviesResults movie = movies.get(i);
+            movies_values[i]  = new ContentValues();
+            movies_values[i].put(MoviesEntry.MOV_COL_ID, movie.getId());
+            movies_values[i].put(MoviesEntry.MOV_COL_TITLE, movie.getTitle());
+            movies_values[i].put(MoviesEntry.MOV_COL_ORIGINAL_TITLE, movie.getOriginalTitle());
+            movies_values[i].put(MoviesEntry.MOV_COL_POSTER, movie.getPosterPath());
+            movies_values[i].put(MoviesEntry.MOV_COL_BACKDROP, movie.getBackdropPath());
+            movies_values[i].put(MoviesEntry.MOV_COL_OVERVIEW, movie.getOverview());
+            movies_values[i].put(MoviesEntry.MOV_COL_RELEASE_DATE, movie.getReleaseDate());
+            movies_values[i].put(MoviesEntry.MOV_COL_POPULARITY, movie.getPopularity());
+            movies_values[i].put(MoviesEntry.MOV_COL_VOTE_COUNTS, movie.getVoteCount());
+            movies_values[i].put(MoviesEntry.MOV_COL_VOTE_AVE, movie.getVoteAverage());
+            movies_values[i].put(MoviesEntry.MOV_COL_FAVOURITE, 0);
+        }
+        return movies_values;
+    }
 
 
     public static ContentValues[] prepareMoviesBulkData(String received_json)

@@ -22,11 +22,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.example.ahmad.popularmovies_final.Data.MoviesContract;
 import com.example.ahmad.popularmovies_final.Data.MoviesContract.MoviesEntry;
+import com.example.ahmad.popularmovies_final.Intenet.RESTAdapter;
+import com.example.ahmad.popularmovies_final.POJOs.Movies.MoviesResponse;
 
 import javax.security.auth.callback.Callback;
+
+import retrofit.Call;
+import retrofit.Response;
 
 
 /**
@@ -40,6 +46,7 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
     private static final String MOST_RATED_MOVIES = "Most Rated Movies";
     private static final String FAVOURITES = "favourites" ;
 
+    private static boolean is_there_data = true;
     private static boolean INTERNET_STATUE_OPENED = true;
 
     //FLAG TO KNOW WHICH DEVICE WORKING RIGHT NOW.
@@ -133,7 +140,7 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
         //Pass the cursor null, because it does not exist yet,
         movie_adapter_data = new MovieCardAdapter(getActivity(),null);
 
-        GridView gridview = (GridView) view.findViewById(R.id.grid_list);
+        GridView gridview = (GridView) view.findViewById(R.id.grid_stage);
         gridview.setAdapter(movie_adapter_data);
 
 
@@ -151,7 +158,7 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
 
 
         //Reference to the grid view.
-        GridView gridview = (GridView) getActivity().findViewById(R.id.grid_list);
+        GridView gridview = (GridView) getActivity().findViewById(R.id.grid_stage);
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -254,6 +261,12 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (data.getCount() == 0) {
+            getLoaderManager().getLoader(CUR_LOADER_ID).stopLoading();
+            is_there_data = false;
+            Log.d("loader p", "onLoadFinished Called!" );
+            askInternetForMovies();
+        }
         movie_adapter_data.swapCursor(data);
     }
 
@@ -266,5 +279,27 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
                 = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    void askInternetForMovies()
+    {
+        RESTAdapter adapter = new RESTAdapter("http://api.themoviedb.org/");
+        Call<MoviesResponse> movies_response = adapter.getInternetGate().getMoviesToStage(arrangement_flag, getResources().getString(R.string.api_key).toString());
+        movies_response.enqueue(new retrofit.Callback<MoviesResponse>() {
+            @Override
+            public void onResponse(Response<MoviesResponse> response) {
+                ContentValues[] movies_data = UtilityMovieData.makeMoviesDataBullk(response.body());
+                getActivity().getContentResolver().bulkInsert(MoviesEntry.CONTENT_URI, movies_data);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                GridView gv = (GridView) getActivity().findViewById(R.id.grid_stage);
+                gv.setVisibility(View.GONE);
+                TextView tv = (TextView) getActivity().findViewById(R.id.stage_text);
+                tv.setVisibility(View.VISIBLE);
+                tv.setText(getResources().getString(R.string.noInternet).toString());
+            }
+        });
     }
 }

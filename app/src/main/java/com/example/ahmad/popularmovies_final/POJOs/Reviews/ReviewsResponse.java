@@ -16,8 +16,8 @@ public class ReviewsResponse {
     private Integer id;
     private Integer page;
     private List<ReviewsResults> results = new ArrayList<ReviewsResults>();
-    private Integer totalPages;
-    private Integer totalResults;
+    private Integer total_pages;
+    private Integer total_results;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
@@ -31,16 +31,16 @@ public class ReviewsResponse {
      *
      * @param id
      * @param results
-     * @param totalResults
+     * @param total_results
      * @param page
-     * @param totalPages
+     * @param total_pages
      */
-    public ReviewsResponse(Integer id, Integer page, List<ReviewsResults> results, Integer totalPages, Integer totalResults) {
+    public ReviewsResponse(Integer id, Integer page, List<ReviewsResults> results, Integer total_pages, Integer total_results) {
         this.id = id;
         this.page = page;
         this.results = results;
-        this.totalPages = totalPages;
-        this.totalResults = totalResults;
+        this.total_pages = total_pages;
+        this.total_results = total_results;
     }
 
     /**
@@ -100,37 +100,37 @@ public class ReviewsResponse {
     /**
      *
      * @return
-     * The totalPages
+     * The total_pages
      */
-    public Integer getTotalPages() {
-        return totalPages;
+    public Integer getTotal_pages() {
+        return total_pages;
     }
 
     /**
      *
-     * @param totalPages
+     * @param total_pages
      * The total_pages
      */
-    public void setTotalPages(Integer totalPages) {
-        this.totalPages = totalPages;
+    public void setTotal_pages(Integer total_pages) {
+        this.total_pages = total_pages;
     }
 
     /**
      *
      * @return
-     * The totalResults
+     * The total_results
      */
-    public Integer getTotalResults() {
-        return totalResults;
+    public Integer getTotal_results() {
+        return total_results;
     }
 
     /**
      *
-     * @param totalResults
+     * @param total_results
      * The total_results
      */
-    public void setTotalResults(Integer totalResults) {
-        this.totalResults = totalResults;
+    public void setTotal_results(Integer total_results) {
+        this.total_results = total_results;
     }
 
     public Map<String, Object> getAdditionalProperties() {

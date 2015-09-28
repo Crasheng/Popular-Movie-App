@@ -10,8 +10,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"></android.support.v7.widget.GridLayout>
     -->
+    <TextView
+        android:id="@+id/stage_text"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textSize="@dimen/abc_text_size_display_1_material"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     <GridView
-        android:id="@+id/grid_list"
+        android:id="@+id/grid_stage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/statelist_selector"

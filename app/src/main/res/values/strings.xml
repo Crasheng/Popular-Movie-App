@@ -16,4 +16,6 @@
     <string name="reviews_button">Reviews</string>
     <string name="reviews_button_single">Review</string>
     <string name="favourite">Favourites</string>
+    <string name="noInternet">No Internet Connection</string>
+    <string name="api_key">b980eff87da0a635d18c8bd29bad78b0</string>
 </resources>

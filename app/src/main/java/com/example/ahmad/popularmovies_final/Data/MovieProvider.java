@@ -219,8 +219,6 @@ public class MovieProvider extends ContentProvider {
         }
         if (deleted_rows != 0)
             getContext().getContentResolver().notifyChange(uri,null);
-        notifyAll();
-
         return deleted_rows;
     }
 

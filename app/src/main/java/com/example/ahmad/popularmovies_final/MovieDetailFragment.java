@@ -28,10 +28,18 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.ahmad.popularmovies_final.Data.MoviesContract;
+import com.example.ahmad.popularmovies_final.Intenet.RESTAdapter;
+import com.example.ahmad.popularmovies_final.POJOs.Reviews.ReviewsResponse;
+import com.example.ahmad.popularmovies_final.POJOs.Videos.VideosResponse;
+import com.example.ahmad.popularmovies_final.POJOs.Videos.VideosResult;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
 
 
 /**
@@ -87,9 +95,13 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         setRetainInstance(true);
         uriOfClickedMovie = getUri(savedInstanceState);
         movie_id = uriOfClickedMovie.getQueryParameter(MoviesContract.MoviesEntry.MOV_COL_ID);
-        new FetchDataInternet(MovieDetailFragment.this, UtilityMovieData.REQUEST_REVIEWS).execute(movie_id);
+        //recommended to be deleted
+        //replace it with the retrofit library.
+       askInternetForReviews(Integer.valueOf(movie_id));
+        //new FetchDataInternet(MovieDetailFragment.this, UtilityMovieData.REQUEST_REVIEWS).execute(movie_id);
         super.onCreate(savedInstanceState);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -187,6 +199,8 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void RequestedDataReady(ContentValues[] fetched_data, int mode) {
         if (mode == UtilityMovieData.REQUEST_MOVIE_VIDEO) {
+            //piece of code when the requested data is ready..
+            //and the data has been requested is the trailers videos.
             List<String> name_list = new ArrayList<>();
             List<String> key_list = new ArrayList<>();
             for (ContentValues cv : fetched_data) {
@@ -250,6 +264,7 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
                 reviews.show(getActivity().getSupportFragmentManager(), "reviews_list");
                 break;
             case R.id.video_button:
+                askInternetForTrailers(Integer.valueOf(movie_id));
                 new FetchDataInternet(MovieDetailFragment.this, UtilityMovieData.REQUEST_MOVIE_VIDEO).execute(movie_id);
                 break;
             case R.id.fav_button:
@@ -383,4 +398,67 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
             adapter.swapCursor(null);
         }
     }
+
+    void askInternetForTrailers(final int movieId)
+    {
+        RESTAdapter adapter = new RESTAdapter("http://api.themoviedb.org/");
+        Call<VideosResponse> videos_repsonse = adapter.getInternetGate()
+                .getVideosOfMovie(movieId, getResources().getString(R.string.api_key).toString());
+        videos_repsonse.enqueue(new Callback<VideosResponse>() {
+            @Override
+            public void onResponse(Response<VideosResponse> response) {
+                //set the dialog fragment data to links of the videos
+                VideosResponse mResponse = response.body();
+                ArrayList<VideosResult> results = (ArrayList<VideosResult>) mResponse.getResults();
+                Bundle bundle = new Bundle();
+                ArrayList<String> names = new ArrayList<String>();
+                ArrayList<String> keys = new ArrayList<String>();
+                for ( VideosResult result: results) {
+                    names.add(result.getName());
+                    keys.add(result.getKey());
+                }
+                bundle.putStringArrayList("name", names);
+                bundle.putStringArrayList("name", keys);
+                final AvailableTrailersFragment dialog = new AvailableTrailersFragment();
+                dialog.setArguments(bundle);
+                //dialog.show(getActivity().getSupportFragmentManager(), "Videos_name");
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
+    }
+
+    private void askInternetForReviews(Integer movie_id) {
+        RESTAdapter adapter = new RESTAdapter("http://api.themoviedb.org/");
+        Call<ReviewsResponse> response = adapter.getInternetGate()
+                .getReviewsAboutMovie(movie_id, getResources().getString(R.string.api_key).toString());
+        response.enqueue(new Callback<ReviewsResponse>() {
+            @Override
+            public void onResponse(Response<ReviewsResponse> response) {
+                ReviewsResponse review_response = response.body();
+                if (review_response.getResults().size() > 0) {
+                    TextView textReviewsNumber = (TextView) getActivity().findViewById(R.id.numberOfReviews);
+                    Button reviewsButton = (Button) getActivity().findViewById(R.id.reviews_button);
+                    if (review_response.getResults().size() == 1) {
+                        textReviewsNumber.setText("("+String.valueOf(review_response.getResults().size())+")");
+                        reviewsButton.setText(getString(R.string.reviews_button_single));
+                    }else{
+                        textReviewsNumber.setText("("+String.valueOf(review_response.getResults().size())+")");
+                        reviewsButton.setText(getString(R.string.reviews_button));
+                    }
+                    ContentValues[] fetched_data = UtilityMovieData.prepareReviewsBulkData(response.body());
+                    getActivity().getContentResolver().bulkInsert(MoviesContract.ReviewsEntry.CONTENT_URI, fetched_data);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
+    }
+
 }

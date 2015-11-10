@@ -7,8 +7,10 @@ import android.util.Log;
 
 import com.example.ahmad.popularmovies_final.Data.MoviesContract;
 import com.example.ahmad.popularmovies_final.Data.MoviesContract.MoviesEntry;
-import com.example.ahmad.popularmovies_final.POJOs.Movies.MoviesResponse;
+import com.example.ahmad.popularmovies_final.POJOs.Movies.MovieResponse;
 import com.example.ahmad.popularmovies_final.POJOs.Movies.MoviesResults;
+import com.example.ahmad.popularmovies_final.POJOs.Reviews.ReviewsResponse;
+import com.example.ahmad.popularmovies_final.POJOs.Reviews.ReviewsResults;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +33,7 @@ public class UtilityMovieData {
     public static final String VIDEO_WEBSITE = "site";
 
 
-    public static ContentValues[] makeMoviesDataBullk(MoviesResponse mresponse)
+    public static ContentValues[] makeMoviesDataBullk(MovieResponse mresponse)
     {
         List<MoviesResults> movies =  mresponse.getResults();
         int length = movies.size();
@@ -86,7 +88,7 @@ public class UtilityMovieData {
         return movies_values;
     }
 
-    public static ContentValues[] prepareReviewsBulkData(String received_json)
+    public static ContentValues[] prepareReviewsBulkDat(String received_json)
     {
         JSONArray reviews;
         ContentValues[] reviews_values = null;
@@ -118,6 +120,26 @@ public class UtilityMovieData {
         }
         return reviews_values;
     }
+
+
+    public static ContentValues[] prepareReviewsBulkData(ReviewsResponse response)
+    {
+        int length = response.getResults().size();
+        long movie_id = response.getId();
+        List<ReviewsResults> results = response.getResults();
+        ContentValues[] reviews_values = null;
+        reviews_values = new ContentValues[length];
+        for (int i = 0; i < length; i++) {
+            ReviewsResults review_result = results.get(i);
+            reviews_values[i] = new ContentValues();
+            reviews_values[i].put(MoviesContract.ReviewsEntry.RELATED_MOVIE, movie_id);
+            reviews_values[i].put(MoviesContract.ReviewsEntry.REVIEW_UNI_ID, review_result.getId());
+            reviews_values[i].put(MoviesContract.ReviewsEntry.REV_COL_AUTHOR,review_result.getAuthor());
+            reviews_values[i].put(MoviesContract.ReviewsEntry.REV_COL_CONTENT, review_result.getContent());
+        }
+        return reviews_values;
+    }
+
 
     public static ContentValues[] prepareVideosData(String received_json) {
         ContentValues[] video_data = null;

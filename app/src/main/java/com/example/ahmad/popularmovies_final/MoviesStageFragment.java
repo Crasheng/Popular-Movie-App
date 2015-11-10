@@ -1,8 +1,10 @@
 package com.example.ahmad.popularmovies_final;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -27,7 +29,7 @@ import android.widget.TextView;
 import com.example.ahmad.popularmovies_final.Data.MoviesContract;
 import com.example.ahmad.popularmovies_final.Data.MoviesContract.MoviesEntry;
 import com.example.ahmad.popularmovies_final.Intenet.RESTAdapter;
-import com.example.ahmad.popularmovies_final.POJOs.Movies.MoviesResponse;
+import com.example.ahmad.popularmovies_final.POJOs.Movies.MovieResponse;
 
 import javax.security.auth.callback.Callback;
 
@@ -42,44 +44,42 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
 
     //LOG AN EVENT.
     public static final String TAG = "check_populating";
+    //Cursor identifier.
+    static final int CUR_LOADER_ID = 0;
+    //constants
     private static final String POPULAR_MOVIES = "Popular Movies";
     private static final String MOST_RATED_MOVIES = "Most Rated Movies";
-    private static final String FAVOURITES = "favourites" ;
-
+    private static final String FAVOURITES = "favourites";
+    private static final String MY_PREFERENCE = "my_preference";
+    private static final String SORT_TYPE = "sort_type";
+    private static final String DEFAULT_SORT_TYPE = "popularity.DESC";
+    private static final String SORT_VOTE_TYPE = "vote_count.DESC";
     private static boolean is_there_data = true;
-    private static boolean INTERNET_STATUE_OPENED = true;
 
     //FLAG TO KNOW WHICH DEVICE WORKING RIGHT NOW.
-//    private static boolean TABLET_FLAG = false;
+    //private static boolean TABLET_FLAG = false;
+    private static boolean INTERNET_STATUE_OPENED = true;
 
-
-
-    //Custom Adapter for movies data
-    MovieCardAdapter movie_adapter_data;
-
-    //Cursor identifier.
-    static final int CUR_LOADER_ID = 0 ;
-
-    //Column that is in need.
-    private static String[] projections ={
+    //Column that you need to populate the stage screen.
+    private static String[] projections = {
             MoviesEntry.TABLE_NAME + "." + MoviesEntry._ID,
             MoviesEntry.MOV_COL_ID,
             MoviesEntry.MOV_COL_POSTER
     };
 
+    private static String arrangement_flag = null;
+    private static SharedPreferences preferences;
+
+    //Custom Cursor Adapter for movies data
+    MovieCardAdapter movie_adapter_data;
+    private boolean fetch_internet_flag = false;
 
 
-    private static String arrangement_flag = "popularity.DESC";
-
-
-    @Override
-    public void RequestedDataReady(ContentValues[] fetched_movies, int mode) {
-
-        if (fetched_movies != null && mode == UtilityMovieData.REQUEST_MOVIES) {
-            getActivity().getContentResolver().bulkInsert(MoviesContract.MoviesEntry.CONTENT_URI, fetched_movies);
-        }
+    public MoviesStageFragment() {
     }
 
+
+    //to be removed
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -88,22 +88,24 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
         }
     }
 
-    //The MoviesStageActivity will implement this interface.
-    public interface onMovieClick{
-        void movieHasBeenClicked(Uri clicked_movie);
-    }
-
-
-    public MoviesStageFragment() {
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        if (savedInstanceState == null && INTERNET_STATUE_OPENED) {
-            //CREATE a new instance and start execute it.
-            new FetchDataInternet(this, UtilityMovieData.REQUEST_MOVIES).execute(arrangement_flag);
+        Log.d(TAG, "on create");
+
+        //check if there is any data before in the tables or open for first time
+        //TODO
+        //Decompose what this method do.
+        Cursor c = getActivity().getContentResolver().query(MoviesEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+        if (c.getCount() == 0) {
+            fetch_internet_flag = true;
+            askInternetForMoviesAndShowProgressBar(getActivity());
         }
         super.onCreate(savedInstanceState);
 
@@ -111,48 +113,36 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
 
 
     @Override
-    public void onResume() {
-            super.onResume();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-/*        RESTAdapter adapter = new RESTAdapter("http://api.themoviedb.org/");
-        Call<MoviesResponse> movies_response = adapter.getInternetGate().getMoviesToStage("sort_type", "api_key");
-        movies_response.enqueue(new retrofit.Callback<MoviesResponse>() {
-            @Override
-            public void onResponse(Response<MoviesResponse> response) {
-                ContentValues[] movies_data = UtilityMovieData.makeMoviesDataBullk(response.body());
-                getActivity().getContentResolver().bulkInsert(MoviesEntry.CONTENT_URI, movies_data);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-
-            }
-        });*/
-
-
+        Log.d(TAG, "on create view");
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         //Pass the cursor null, because it does not exist yet,
-        movie_adapter_data = new MovieCardAdapter(getActivity(),null);
+        movie_adapter_data = new MovieCardAdapter(getActivity(), null);
 
         GridView gridview = (GridView) view.findViewById(R.id.grid_stage);
         gridview.setAdapter(movie_adapter_data);
 
-
-
         return view;
     }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
+        Log.d(TAG, "on act created");
 
-        // Prepare the loader.  Either re-connect with an existing one,
+
+        //check the user preferences and if has been set yet use the default (Popularity)
+        //TODO
+        //check its point on the list on the ui
+        preferences = getActivity().getSharedPreferences(MY_PREFERENCE, Context.MODE_PRIVATE);
+        arrangement_flag = preferences.getString(MY_PREFERENCE, DEFAULT_SORT_TYPE);
+        Log.d(TAG, "Arrangment : " + getActivity().getSharedPreferences(MY_PREFERENCE, Context.MODE_PRIVATE).getString(SORT_TYPE, "Default"));
+
+        // Prepare the loader.
+        // Either re-connect with an existing one,
         // or start a new one.
         getLoaderManager().initLoader(CUR_LOADER_ID, null, this);
 
@@ -160,11 +150,16 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
         //Reference to the grid view.
         GridView gridview = (GridView) getActivity().findViewById(R.id.grid_stage);
 
+
+
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 Uri movie_detail_uri = null;
+                //Cursor never return null.
+                //but this method return Object type, and you just have to cast it to
+                //whatever u are predicting the adapter is using.
+                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null) {
 
                     //getting the clicked movie id.
@@ -181,51 +176,62 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
         super.onActivityCreated(savedInstanceState);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main, menu);
-        //must be called after these items added to the menu.
-        menu.setGroupCheckable(R.id.menu_group, true, true);
 
-        //This piece of code for setting the title of Activity
-        //depends on preferred movies sort
-        MenuItem pop_mov_item = menu.findItem(R.id.pop_movies);
-        MenuItem most_rated_item = menu.findItem(R.id.most_rated);
-        if (pop_mov_item.isChecked())
-            getActivity().setTitle(POPULAR_MOVIES);
-        else if (most_rated_item.isChecked()) {
-            getActivity().setTitle(MOST_RATED_MOVIES);
+    //This method needs to be deprecated because now we are using Retrofit 2.0 Library.
+    @Override
+    public void RequestedDataReady(ContentValues[] fetched_movies, int mode) {
+
+        if (fetched_movies != null && mode == UtilityMovieData.REQUEST_MOVIES) {
+            getActivity().getContentResolver().bulkInsert(MoviesContract.MoviesEntry.CONTENT_URI, fetched_movies);
         }
     }
 
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+
+        //must be called after these items added to the menu.
+        menu.setGroupCheckable(R.id.menu_group, true, true);
+
+        //depends on preferred movies sort
+        setActivityLabel(menu);
+    }
 
 
+    //TODO
+    //try to re factor the code and decompose and make it looks sexy.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.pop_movies:
                 item.setChecked(true);
-                arrangement_flag = MoviesEntry.MOV_COL_POPULARITY+"."+MoviesEntry.SORT_ORDER.trim();
+                arrangement_flag = MoviesEntry.MOV_COL_POPULARITY + "." + MoviesEntry.SORT_ORDER.trim();
+                preferences = getActivity().getSharedPreferences(MY_PREFERENCE, Context.MODE_PRIVATE);
+                preferences.edit().putString(SORT_TYPE, arrangement_flag).commit();
                 getActivity().setTitle(POPULAR_MOVIES);
-                new FetchDataInternet(this, UtilityMovieData.REQUEST_MOVIES).execute(arrangement_flag);
+                //new FetchDataInternet(this, UtilityMovieData.REQUEST_MOVIES).execute(arrangement_flag);
+                askInternetForMoviesAndShowProgressBar(getActivity());
                 getLoaderManager().restartLoader(CUR_LOADER_ID, null, this);
                 return true;
+
             case R.id.most_rated:
                 item.setChecked(true);
-                arrangement_flag = MoviesEntry.MOV_COL_VOTE_COUNTS+"."+MoviesEntry.SORT_ORDER.trim();
+                arrangement_flag = MoviesEntry.MOV_COL_VOTE_COUNTS + "." + MoviesEntry.SORT_ORDER.trim();
+                preferences = getActivity().getSharedPreferences(MY_PREFERENCE, Context.MODE_PRIVATE);
+                preferences.edit().putString(SORT_TYPE, arrangement_flag).commit();
                 getActivity().setTitle(MOST_RATED_MOVIES);
-                new FetchDataInternet(this, UtilityMovieData.REQUEST_MOVIES).execute(arrangement_flag);
+//                new FetchDataInternet(this, UtilityMovieData.REQUEST_MOVIES).execute(arrangement_flag);
+                askInternetForMoviesAndShowProgressBar(getActivity());
                 getLoaderManager().restartLoader(CUR_LOADER_ID, null, this);
                 return true;
+
             case R.id.fav_movies:
                 item.setChecked(true);
                 arrangement_flag = FAVOURITES;
+                preferences = getActivity().getSharedPreferences(MY_PREFERENCE, Context.MODE_PRIVATE);
+                preferences.edit().putString(SORT_TYPE, arrangement_flag).commit();
                 getActivity().setTitle(FAVOURITES);
                 getLoaderManager().restartLoader(CUR_LOADER_ID, null, this);
             case R.id.refresh:
@@ -236,23 +242,25 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
         }
     }
 
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
+        Log.d(TAG, "on create loader");
+
+        // Log.d("prefer", "onCreateLoader " + arrangement_flag.toString());
         Uri populate_stage_uri;
+        //check the user preferred sort type to decide which table you going to query.
         if (arrangement_flag.equals("popularity.DESC")) {
             populate_stage_uri = MoviesEntry.buildMovieWithSortUri(MoviesEntry.MOV_COL_POPULARITY + MoviesEntry.SORT_ORDER);
-        }
-        else if (arrangement_flag.equals(FAVOURITES) ){
+        } else if (arrangement_flag.equals(FAVOURITES)) {
             populate_stage_uri = MoviesContract.FavouriteEntry.CONTENT_URI;
-        }
-        else
-        {
+        } else {
             populate_stage_uri = MoviesEntry.buildMovieWithSortUri(MoviesEntry.MOV_COL_VOTE_COUNTS + MoviesEntry.SORT_ORDER);
         }
 
         Log.d(TAG, "onCreateLoader  : " + populate_stage_uri.toString());
-        return new CursorLoader(getActivity(),populate_stage_uri,projections,
+        return new CursorLoader(getActivity(), populate_stage_uri, projections,
                 null,
                 null,
                 null
@@ -261,11 +269,15 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        //TODO
+        //Improve this to check wither there is data in the database to load it or
+        //wait until the internet connection open and re-query again.
         if (data.getCount() == 0) {
             getLoaderManager().getLoader(CUR_LOADER_ID).stopLoading();
             is_there_data = false;
-            Log.d("loader p", "onLoadFinished Called!" );
-            askInternetForMovies();
+            Log.d("loader p", "onLoadFinished Called!");
+            getLoaderManager().restartLoader(CUR_LOADER_ID, null, this);
         }
         movie_adapter_data.swapCursor(data);
     }
@@ -274,32 +286,70 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
     public void onLoaderReset(Loader<Cursor> loader) {
         movie_adapter_data.swapCursor(null);
     }
+
     private boolean isNetworkAvailable(Activity activity) {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        //should check null because in air plan mode it will be null
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    void askInternetForMovies()
-    {
+
+    void askInternetForMoviesAndShowProgressBar(Activity activity) {
         RESTAdapter adapter = new RESTAdapter("http://api.themoviedb.org/");
-        Call<MoviesResponse> movies_response = adapter.getInternetGate().getMoviesToStage(arrangement_flag, getResources().getString(R.string.api_key).toString());
-        movies_response.enqueue(new retrofit.Callback<MoviesResponse>() {
+        Call<MovieResponse> movies_response = adapter.getInternetGate().getMoviesToStage(arrangement_flag, getResources().getString(R.string.api_key).toString());
+        final ProgressDialog mProgressDialog = new ProgressDialog(activity);
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setMessage("Loading...");
+        Log.d(TAG, "Arrangment : " + arrangement_flag);
+        Log.d(TAG, "Arrangment : " + getActivity().getSharedPreferences(MY_PREFERENCE, Context.MODE_PRIVATE).getString(SORT_TYPE, "Default"));
+
+
+        mProgressDialog.show();
+
+        movies_response.enqueue(new retrofit.Callback<MovieResponse>() {
             @Override
-            public void onResponse(Response<MoviesResponse> response) {
+            public void onResponse(Response<MovieResponse> response) {
+                INTERNET_STATUE_OPENED = true;
                 ContentValues[] movies_data = UtilityMovieData.makeMoviesDataBullk(response.body());
                 getActivity().getContentResolver().bulkInsert(MoviesEntry.CONTENT_URI, movies_data);
+                if (mProgressDialog.isShowing())
+                    mProgressDialog.dismiss();
+
             }
 
             @Override
             public void onFailure(Throwable t) {
+
+                if (mProgressDialog.isShowing())
+                    mProgressDialog.dismiss();
+
+                INTERNET_STATUE_OPENED = false;
                 GridView gv = (GridView) getActivity().findViewById(R.id.grid_stage);
                 gv.setVisibility(View.GONE);
+
                 TextView tv = (TextView) getActivity().findViewById(R.id.stage_text);
                 tv.setVisibility(View.VISIBLE);
                 tv.setText(getResources().getString(R.string.noInternet).toString());
             }
         });
+    }
+
+    //Set the label of the activity depending on the preferred user movies sort type.
+    //The MoviesSta geActivity will implement this interface.
+    void setActivityLabel(Menu menu)
+    {
+        MenuItem pop_mov_item = menu.findItem(R.id.pop_movies);
+        MenuItem most_rated_item = menu.findItem(R.id.most_rated);
+        if (pop_mov_item.isChecked())
+            getActivity().setTitle(POPULAR_MOVIES);
+        else if (most_rated_item.isChecked()) {
+            getActivity().setTitle(MOST_RATED_MOVIES);
+        }
+    }
+
+    public interface onMovieClick {
+        void movieHasBeenClicked(Uri clicked_movie);
     }
 }

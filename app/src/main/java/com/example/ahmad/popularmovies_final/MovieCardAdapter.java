@@ -40,11 +40,11 @@ public class MovieCardAdapter extends CursorAdapter {
         String poster_path = cursor.getString(col_index);
         String imagepath = "http://image.tmdb.org/t/p/w342" + poster_path;
 
+
         //Using Picasso to fetch the pics and populate it.
         Picasso.with(context).load(imagepath).error(R.drawable.spinner).noFade().into(viewholder.movie_poster);
-
-//        Glide is good in fetching movies posters from the cash, but it is not reliable enough!.
-//        Glide.with(context).load(imagepath).error(R.drawable.spinner).into(viewholder.movie_poster);
+//      Glide is good in fetching movies posters from the cash, but it is not reliable enough!.
+//      Glide.with(context).load(imagepath).error(R.drawable.spinner).into(viewholder.movie_poster);
     }
 
     class ViewHolderCustom {

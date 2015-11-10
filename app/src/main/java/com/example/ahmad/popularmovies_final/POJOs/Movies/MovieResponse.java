@@ -10,7 +10,7 @@ import java.util.Map;
 import javax.annotation.Generated;
 
 @Generated("org.jsonschema2pojo")
-public class MoviesResponse {
+public class MovieResponse {
 
     private Integer page;
     private List<MoviesResults> results = new ArrayList<MoviesResults>();
@@ -22,7 +22,7 @@ public class MoviesResponse {
      * No args constructor for use in serialization
      *
      */
-    public MoviesResponse() {
+    public MovieResponse() {
     }
 
     /**
@@ -32,7 +32,7 @@ public class MoviesResponse {
      * @param page
      * @param total_pages
      */
-    public MoviesResponse(Integer page, List<MoviesResults> results, Integer total_pages, Integer total_results) {
+    public MovieResponse(Integer page, List<MoviesResults> results, Integer total_pages, Integer total_results) {
         this.page = page;
         this.results = results;
         this.total_pages = total_pages;

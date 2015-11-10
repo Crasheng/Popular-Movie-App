@@ -22,6 +22,7 @@ import java.util.Collection;
  */
 public class CardAdapter extends ArrayAdapter<MovieData> {
 
+
     class ViewHolder{
         ImageView movie_poster;
     }
@@ -46,13 +47,18 @@ public class CardAdapter extends ArrayAdapter<MovieData> {
         }
 
 
+
         MovieData md = getItem(position);
 
         //poster Path
         String imagepath = "http://image.tmdb.org/t/p/w342" + md.getMoviePoster();
 
+        Picasso picasso =  Picasso.with(getContext());
+        picasso.setIndicatorsEnabled(true);
+        picasso.setDebugging(true);
+        picasso.setLoggingEnabled(true);
         //Using Picasso to fetch the pics and populate it.
-        Picasso.with(getContext()).load(imagepath).placeholder(R.drawable.spinner).noFade().into(viewholder.movie_poster);
+        picasso.load(imagepath).placeholder(R.drawable.spinner).noFade().into(viewholder.movie_poster);
 
         return convertView;
     }

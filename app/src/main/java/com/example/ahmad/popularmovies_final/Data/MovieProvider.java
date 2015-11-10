@@ -81,8 +81,10 @@ public class MovieProvider extends ContentProvider {
                             null);
                 }
                 else
-                    throw new UnsupportedOperationException("Invalid URi");
-
+                {
+                    db = dbHelper.getReadableDatabase();
+                    c = db.rawQuery("select * from movie limit 1 ", null);
+                }
                 break;
             case MoviesContract.MOVIES_STAGE_SORT:
                 db = dbHelper.getReadableDatabase();

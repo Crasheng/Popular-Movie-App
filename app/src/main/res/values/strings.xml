@@ -18,4 +18,5 @@
     <string name="favourite">Favourites</string>
     <string name="noInternet">No Internet Connection</string>
     <string name="api_key">b980eff87da0a635d18c8bd29bad78b0</string>
+    <string name="content_authority">com.example.ahmad.popularmovies_final</string>
 </resources>

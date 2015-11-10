@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 //TODOs
-    //1- Factor the Fetch data Class to be configurable
+    //1-Fetch data Class to be configurable
     //2- You have to be sure of the internet connectivity and determine the test cases
     //3- Check the configuration of the Picasso or use Glide and check its configuration too!
 
@@ -49,6 +49,7 @@ public class MoviesStageActivity extends AppCompatActivity implements MoviesStag
 
     }
 
+    //Helper Method.
     //this method to apply a bundle for a fragment adding to it URI for data being populated.
     private Fragment fragmentWithUri(Fragment fragment, String key, Uri uri)
     {

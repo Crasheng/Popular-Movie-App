@@ -45,7 +45,7 @@ import retrofit.Response;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MovieDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, FetchDataInternet.FetchedDataReady, View.OnClickListener {
+public class MovieDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
 
     private static final String RELATED_MOVIE_ID = "clicked_movie";
@@ -98,7 +98,6 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
         //recommended to be deleted
         //replace it with the retrofit library.
        askInternetForReviews(Integer.valueOf(movie_id));
-        //new FetchDataInternet(MovieDetailFragment.this, UtilityMovieData.REQUEST_REVIEWS).execute(movie_id);
         super.onCreate(savedInstanceState);
     }
 
@@ -196,42 +195,6 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     public void onLoaderReset(Loader loader) {
     }
 
-    @Override
-    public void RequestedDataReady(ContentValues[] fetched_data, int mode) {
-        if (mode == UtilityMovieData.REQUEST_MOVIE_VIDEO) {
-            //piece of code when the requested data is ready..
-            //and the data has been requested is the trailers videos.
-            List<String> name_list = new ArrayList<>();
-            List<String> key_list = new ArrayList<>();
-            for (ContentValues cv : fetched_data) {
-                String video_name = cv.getAsString(UtilityMovieData.VIDEO_NAME);
-                String video_key = cv.getAsString(UtilityMovieData.VIDEO_KEY);
-                name_list.add(video_name);
-                key_list.add(video_key);
-            }
-            ArrayList<String> name_array = new ArrayList<>(name_list);
-            ArrayList<String> key_array = new ArrayList<>(key_list);
-            Bundle bundle = new Bundle();
-            bundle.putStringArrayList("name", name_array);
-            bundle.putStringArrayList("key", key_array);
-            final AvailableTrailersFragment dialog = new AvailableTrailersFragment();
-            dialog.setArguments(bundle);
-            dialog.show(getActivity().getSupportFragmentManager(), "Videos_name");
-        }
-        else if (fetched_data != null && mode == UtilityMovieData.REQUEST_REVIEWS) {
-            TextView textReviewsNumber = (TextView) getActivity().findViewById(R.id.numberOfReviews);
-            Button reviewsButton = (Button) getActivity().findViewById(R.id.reviews_button);
-            if (fetched_data.length == 1) {
-                textReviewsNumber.setText("("+String.valueOf(fetched_data.length)+")");
-                reviewsButton.setText(getString(R.string.reviews_button_single));
-            }else{
-                textReviewsNumber.setText("("+String.valueOf(fetched_data.length)+")");
-                reviewsButton.setText(getString(R.string.reviews_button));
-            }
-            getActivity().getContentResolver().bulkInsert(MoviesContract.ReviewsEntry.CONTENT_URI, fetched_data);
-        }
-
-    }
 
 
     private void setLayoutFields(View view) {
@@ -265,7 +228,6 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
                 break;
             case R.id.video_button:
                 askInternetForTrailers(Integer.valueOf(movie_id));
-                new FetchDataInternet(MovieDetailFragment.this, UtilityMovieData.REQUEST_MOVIE_VIDEO).execute(movie_id);
                 break;
             case R.id.fav_button:
                 ContentValues fav_movie = new ContentValues();

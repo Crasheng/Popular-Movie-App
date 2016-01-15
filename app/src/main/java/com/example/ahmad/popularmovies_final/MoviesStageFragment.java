@@ -43,7 +43,7 @@ import retrofit.Response;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MoviesStageFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, Callback, FetchDataInternet.FetchedDataReady {
+public class MoviesStageFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, Callback{
 
     //LOG AN EVENT.
     public static final String TAG = "check_populating";
@@ -189,16 +189,6 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
     }
 
 
-    //This method needs to be deprecated because now we are using Retrofit 2.0 Library.
-    @Override
-    public void RequestedDataReady(ContentValues[] fetched_movies, int mode) {
-
-        if (fetched_movies != null && mode == UtilityMovieData.REQUEST_MOVIES) {
-            getActivity().getContentResolver().bulkInsert(MoviesContract.MoviesEntry.CONTENT_URI, fetched_movies);
-        }
-    }
-
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main, menu);
@@ -222,7 +212,6 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
                 preferences = getActivity().getSharedPreferences(MY_PREFERENCE, Context.MODE_PRIVATE);
                 preferences.edit().putString(SORT_TYPE, arrangement_flag).commit();
                 getActivity().setTitle(POPULAR_MOVIES);
-                //new FetchDataInternet(this, UtilityMovieData.REQUEST_MOVIES).execute(arrangement_flag);
                 askInternetForMoviesAndShowProgressBar(getActivity());
                 getLoaderManager().restartLoader(CUR_LOADER_ID, null, this);
                 return true;
@@ -233,7 +222,6 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
                 preferences = getActivity().getSharedPreferences(MY_PREFERENCE, Context.MODE_PRIVATE);
                 preferences.edit().putString(SORT_TYPE, arrangement_flag).commit();
                 getActivity().setTitle(MOST_RATED_MOVIES);
-//                new FetchDataInternet(this, UtilityMovieData.REQUEST_MOVIES).execute(arrangement_flag);
                 askInternetForMoviesAndShowProgressBar(getActivity());
                 getLoaderManager().restartLoader(CUR_LOADER_ID, null, this);
                 return true;

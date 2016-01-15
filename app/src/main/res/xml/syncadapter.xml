@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
-    android:contentAuthority="@string/content_authority"
-    android:accountType="ahmedadel.pw"
-    android:userVisible="false"
+    android:contentAuthority = "@string/content_authority"
+    android:accountType="@string/account_type"
+    android:userVisible="true"
     android:supportsUploading="false"
     android:allowParallelSyncs="false"
-    android:isAlwaysSyncable="true"/>
+    android:isAlwaysSyncable="true"
+    />
+
+

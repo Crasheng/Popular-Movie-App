@@ -5,9 +5,9 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
-import com.example.ahmad.popularmovies_final.Data.MovieProvider;
-import com.example.ahmad.popularmovies_final.Data.MoviesContract;
-import com.example.ahmad.popularmovies_final.Data.MoviesContract.MoviesEntry;
+import com.example.ahmad.popularmovies_final.data.MovieProvider;
+import com.example.ahmad.popularmovies_final.data.MoviesContract;
+import com.example.ahmad.popularmovies_final.data.MoviesContract.MoviesEntry;
 
 /**
  * Created by Ahmad on 8/3/2015.
@@ -21,13 +21,13 @@ public class TestUriMatcher extends AndroidTestCase {
     private final static Uri TEST_MOVIE_DETAIL_URI = MoviesEntry.buildMovieWithUniIdUri(test_id);
     private final static Uri TEST_REVIEW_URI = MoviesContract.ReviewsEntry.CONTENT_URI;
 
-    public void testUriMatcher(){
+    public void testUriMatcher() {
         Log.d(LOG_TAG, String.valueOf(TEST_MOVIE_URI));
-        Log.d(LOG_TAG,String.valueOf(TEST_REVIEW_URI));
-        Log.d(LOG_TAG,TEST_MOVIE_DETAIL_URI.getLastPathSegment());
-        Log.d(LOG_TAG,String.valueOf(TEST_MOVIE_SORT_URI));
+        Log.d(LOG_TAG, String.valueOf(TEST_REVIEW_URI));
+        Log.d(LOG_TAG, TEST_MOVIE_DETAIL_URI.getLastPathSegment());
+        Log.d(LOG_TAG, String.valueOf(TEST_MOVIE_SORT_URI));
 
-        UriMatcher matcher =  MovieProvider.buildUriMatcher();
+        UriMatcher matcher = MovieProvider.buildUriMatcher();
         Log.d("babe", String.valueOf(TEST_MOVIE_DETAIL_URI));
         assertEquals("Error in matching movies", matcher.match(TEST_MOVIE_URI), MoviesContract.MOVIES);
         assertEquals("Error in matching movies_stage", matcher.match(TEST_MOVIE_SORT_URI), MoviesContract.MOVIES_STAGE_SORT);

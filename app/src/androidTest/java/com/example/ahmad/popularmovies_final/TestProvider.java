@@ -1,7 +1,6 @@
 package com.example.ahmad.popularmovies_final;
 
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,9 +8,9 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
-import com.example.ahmad.popularmovies_final.Data.AppDBHelper;
-import com.example.ahmad.popularmovies_final.Data.MoviesContract.*;
-
+import com.example.ahmad.popularmovies_final.data.AppDBHelper;
+import com.example.ahmad.popularmovies_final.data.MoviesContract.MoviesEntry;
+import com.example.ahmad.popularmovies_final.data.MoviesContract.ReviewsEntry;
 
 
 /**

@@ -1,17 +1,15 @@
-package com.example.ahmad.popularmovies_final.Sync;
+package com.example.ahmad.popularmovies_final.sync;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 
-/**
- * Created by Ahmad on 10/10/2015.
- */
 public class AuthenticatorService extends Service {
 
+    private Authenticator mAuthenticator;
 
-    private Authenticator mAuthenticator = null;
+    public AuthenticatorService() {
+    }
 
     @Override
     public void onCreate() {
@@ -19,9 +17,10 @@ public class AuthenticatorService extends Service {
         super.onCreate();
     }
 
-    @Nullable
+
     @Override
     public IBinder onBind(Intent intent) {
+        // TODO: Return the communication channel to the service.
         return mAuthenticator.getIBinder();
     }
 }

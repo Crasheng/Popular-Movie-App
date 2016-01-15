@@ -1,7 +1,10 @@
 package com.example.ahmad.popularmovies_final;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,10 +29,10 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import com.example.ahmad.popularmovies_final.Data.MoviesContract;
-import com.example.ahmad.popularmovies_final.Data.MoviesContract.MoviesEntry;
 import com.example.ahmad.popularmovies_final.Intenet.RESTAdapter;
-import com.example.ahmad.popularmovies_final.POJOs.Movies.MovieResponse;
+import com.example.ahmad.popularmovies_final.data.MoviesContract;
+import com.example.ahmad.popularmovies_final.data.MoviesContract.MoviesEntry;
+import com.example.ahmad.popularmovies_final.pojos.Movies.MovieResponse;
 
 import javax.security.auth.callback.Callback;
 
@@ -74,6 +77,13 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
     MovieCardAdapter movie_adapter_data;
     private boolean fetch_internet_flag = false;
 
+    // The account type
+    private static final String ACCOUNT_TYPE = "android.ahmedadel.pw";
+
+    // The account name
+    public static final String ACCOUNT = "dummyaccount";
+    // Instance fields
+    Account mAccount;
 
     public MoviesStageFragment() {
     }
@@ -107,6 +117,9 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
             fetch_internet_flag = true;
             askInternetForMoviesAndShowProgressBar(getActivity());
         }
+
+        mAccount = CreateSyncAccount(getActivity());
+
         super.onCreate(savedInstanceState);
 
     }
@@ -151,7 +164,6 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
         GridView gridview = (GridView) getActivity().findViewById(R.id.grid_stage);
 
 
-
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -175,7 +187,6 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
         });
         super.onActivityCreated(savedInstanceState);
     }
-
 
 
     //This method needs to be deprecated because now we are using Retrofit 2.0 Library.
@@ -236,6 +247,19 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
                 getLoaderManager().restartLoader(CUR_LOADER_ID, null, this);
             case R.id.refresh:
                 INTERNET_STATUE_OPENED = isNetworkAvailable(getActivity());
+                // Pass the settings flags by inserting them in a bundle
+                Bundle settingsBundle = new Bundle();
+                settingsBundle.putBoolean(
+                        ContentResolver.SYNC_EXTRAS_MANUAL, true);
+                settingsBundle.putBoolean(
+                        ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+                /*
+                 * Request the sync for the default account, authority, and
+                 * manual sync settings
+                 */
+                ContentResolver.requestSync(mAccount,
+                        getResources().getString(R.string.content_authority).toString(),
+                        settingsBundle);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -338,8 +362,7 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
 
     //Set the label of the activity depending on the preferred user movies sort type.
     //The MoviesSta geActivity will implement this interface.
-    void setActivityLabel(Menu menu)
-    {
+    void setActivityLabel(Menu menu) {
         MenuItem pop_mov_item = menu.findItem(R.id.pop_movies);
         MenuItem most_rated_item = menu.findItem(R.id.most_rated);
         if (pop_mov_item.isChecked())
@@ -351,5 +374,38 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
 
     public interface onMovieClick {
         void movieHasBeenClicked(Uri clicked_movie);
+    }
+
+    /**
+     * Create a new dummy account for the sync adapter
+     *
+     * @param context The application context
+     */
+    public static Account CreateSyncAccount(Context context) {
+        // Create the account type and default account
+        Account newAccount = new Account(
+                ACCOUNT, ACCOUNT_TYPE);
+        // Get an instance of the Android account manager
+        AccountManager accountManager =
+                (AccountManager) context.getSystemService(
+                        context.ACCOUNT_SERVICE);
+        /*
+         * Add the account and account type, no password or user data
+         * If successful, return the Account object, otherwise report an error.
+         */
+        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
+            /*
+             * If you don't set android:syncable="true" in
+             * in your <provider> element in the manifest,
+             * then call context.setIsSyncable(account, AUTHORITY, 1)
+             * here.
+             */
+        } else {
+            /*
+             * The account exists or some other error occurred. Log this, report it,
+             * or handle it internally.
+             */
+        }
+    return newAccount;
     }
 }

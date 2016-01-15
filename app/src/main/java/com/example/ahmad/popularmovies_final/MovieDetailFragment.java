@@ -27,11 +27,11 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.example.ahmad.popularmovies_final.Data.MoviesContract;
+import com.example.ahmad.popularmovies_final.data.MoviesContract;
 import com.example.ahmad.popularmovies_final.Intenet.RESTAdapter;
-import com.example.ahmad.popularmovies_final.POJOs.Reviews.ReviewsResponse;
-import com.example.ahmad.popularmovies_final.POJOs.Videos.VideosResponse;
-import com.example.ahmad.popularmovies_final.POJOs.Videos.VideosResult;
+import com.example.ahmad.popularmovies_final.pojos.Reviews.ReviewsResponse;
+import com.example.ahmad.popularmovies_final.pojos.Videos.VideosResponse;
+import com.example.ahmad.popularmovies_final.pojos.Videos.VideosResult;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

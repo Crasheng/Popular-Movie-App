@@ -1,4 +1,4 @@
-package com.example.ahmad.popularmovies_final.Sync;
+package com.example.ahmad.popularmovies_final.sync;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
@@ -8,7 +8,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 /**
- * Created by Ahmad on 10/10/2015.
+ * Created by crasheng on 25/12/15.
  */
 public class Authenticator extends AbstractAccountAuthenticator {
     public Authenticator(Context context) {

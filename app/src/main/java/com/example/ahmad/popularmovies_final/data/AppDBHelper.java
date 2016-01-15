@@ -1,11 +1,11 @@
-package com.example.ahmad.popularmovies_final.Data;
+package com.example.ahmad.popularmovies_final.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import com.example.ahmad.popularmovies_final.Data.MoviesContract.FavouriteEntry;
-import com.example.ahmad.popularmovies_final.Data.MoviesContract.MoviesEntry;
-import com.example.ahmad.popularmovies_final.Data.MoviesContract.ReviewsEntry;
+import com.example.ahmad.popularmovies_final.data.MoviesContract.FavouriteEntry;
+import com.example.ahmad.popularmovies_final.data.MoviesContract.MoviesEntry;
+import com.example.ahmad.popularmovies_final.data.MoviesContract.ReviewsEntry;
 
 /**
  * Created by Ahmad on 7/23/2015.

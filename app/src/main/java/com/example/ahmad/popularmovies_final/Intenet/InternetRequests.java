@@ -1,7 +1,7 @@
 package com.example.ahmad.popularmovies_final.Intenet;
 
-import com.example.ahmad.popularmovies_final.POJOs.Movies.MovieResponse;
-import com.example.ahmad.popularmovies_final.POJOs.Reviews.ReviewsResponse;
+import com.example.ahmad.popularmovies_final.pojos.Movies.MovieResponse;
+import com.example.ahmad.popularmovies_final.pojos.Reviews.ReviewsResponse;
 
 import retrofit.Call;
 import retrofit.http.GET;
@@ -24,7 +24,7 @@ public interface InternetRequests {
 
 
     @GET("/3/movie/{id}/videos")
-    Call<com.example.ahmad.popularmovies_final.POJOs.Videos.VideosResponse> getVideosOfMovie(@Path("id") Integer id,
+    Call<com.example.ahmad.popularmovies_final.pojos.Videos.VideosResponse> getVideosOfMovie(@Path("id") Integer id,
                                           @Query("api_key") String api_key);
 
 

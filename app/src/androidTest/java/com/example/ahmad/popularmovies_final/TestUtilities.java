@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.test.AndroidTestCase;
 
-import com.example.ahmad.popularmovies_final.Data.MoviesContract;
+import com.example.ahmad.popularmovies_final.data.MoviesContract;
 
 import java.util.Map;
 import java.util.Set;

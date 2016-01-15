@@ -1,4 +1,4 @@
-package com.example.ahmad.popularmovies_final.Data;
+package com.example.ahmad.popularmovies_final.data;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -11,8 +11,8 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
 
-import com.example.ahmad.popularmovies_final.Data.MoviesContract.MoviesEntry;
-import com.example.ahmad.popularmovies_final.Data.MoviesContract.ReviewsEntry;
+import com.example.ahmad.popularmovies_final.data.MoviesContract.MoviesEntry;
+import com.example.ahmad.popularmovies_final.data.MoviesContract.ReviewsEntry;
 import com.example.ahmad.popularmovies_final.MoviesStageFragment;
 
 

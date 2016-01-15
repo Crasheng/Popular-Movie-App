@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.example.ahmad.popularmovies_final.Data.MoviesContract;
+import com.example.ahmad.popularmovies_final.data.MoviesContract;
 
 /**
  * A placeholder fragment containing a simple view.

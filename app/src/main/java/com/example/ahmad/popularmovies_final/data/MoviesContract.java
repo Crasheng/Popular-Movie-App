@@ -1,4 +1,4 @@
-package com.example.ahmad.popularmovies_final.Data;
+package com.example.ahmad.popularmovies_final.data;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;

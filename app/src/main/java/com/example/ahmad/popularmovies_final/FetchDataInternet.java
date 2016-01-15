@@ -15,7 +15,7 @@ import java.net.URL;
 import javax.security.auth.callback.Callback;
 
 /*
- * Overriding Asynctask class to craete threads for fetching data from internet
+ * Overriding Asynctask class to create threads for fetching data from internet
  * */
 class FetchDataInternet extends AsyncTask<String, Void, String> implements Callback {
 
@@ -54,7 +54,7 @@ class FetchDataInternet extends AsyncTask<String, Void, String> implements Callb
                 break;
             case UtilityMovieData.REQUEST_REVIEWS:
                 //Prepare the required data.
-                ContentValues[] reviews_data = UtilityMovieData.prepareReviewsBulkData(s);
+                ContentValues[] reviews_data = UtilityMovieData.prepareReviewsBulkDat(s);
                 //Fire the Callback on the listener Fragment.
                 listener.RequestedDataReady(reviews_data, UtilityMovieData.REQUEST_REVIEWS);
                 break;

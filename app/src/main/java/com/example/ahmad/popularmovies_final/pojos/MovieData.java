@@ -1,4 +1,4 @@
-package com.example.ahmad.popularmovies_final.POJOs;
+package com.example.ahmad.popularmovies_final.pojos;
 
 import android.os.Parcel;
 import android.os.Parcelable;

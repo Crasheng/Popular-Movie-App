@@ -1,4 +1,4 @@
-package com.example.ahmad.popularmovies_final.POJOs.Movies;
+package com.example.ahmad.popularmovies_final.pojos.Movies;
 
 /**
  * Created by crasheng on 9/26/15.

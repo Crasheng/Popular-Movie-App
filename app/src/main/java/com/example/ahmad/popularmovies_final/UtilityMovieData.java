@@ -5,12 +5,12 @@ import android.content.ContentValues;
 import android.net.Uri;
 import android.util.Log;
 
-import com.example.ahmad.popularmovies_final.Data.MoviesContract;
-import com.example.ahmad.popularmovies_final.Data.MoviesContract.MoviesEntry;
-import com.example.ahmad.popularmovies_final.POJOs.Movies.MovieResponse;
-import com.example.ahmad.popularmovies_final.POJOs.Movies.MoviesResults;
-import com.example.ahmad.popularmovies_final.POJOs.Reviews.ReviewsResponse;
-import com.example.ahmad.popularmovies_final.POJOs.Reviews.ReviewsResults;
+import com.example.ahmad.popularmovies_final.data.MoviesContract;
+import com.example.ahmad.popularmovies_final.data.MoviesContract.MoviesEntry;
+import com.example.ahmad.popularmovies_final.pojos.Movies.MovieResponse;
+import com.example.ahmad.popularmovies_final.pojos.Movies.MoviesResults;
+import com.example.ahmad.popularmovies_final.pojos.Reviews.ReviewsResponse;
+import com.example.ahmad.popularmovies_final.pojos.Reviews.ReviewsResults;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,9 +44,9 @@ public class UtilityMovieData {
             movies_values[i].put(MoviesEntry.MOV_COL_ID, movie.getId());
             movies_values[i].put(MoviesEntry.MOV_COL_TITLE, movie.getTitle());
             movies_values[i].put(MoviesEntry.MOV_COL_ORIGINAL_TITLE, movie.getOriginalTitle());
-            movies_values[i].put(MoviesEntry.MOV_COL_POSTER, movie.getPoster_path());
-            movies_values[i].put(MoviesEntry.MOV_COL_BACKDROP, movie.getBackdrop_path());
-            movies_values[i].put(MoviesEntry.MOV_COL_OVERVIEW, movie.getOverview());
+            movies_values[i].put(MoviesEntry.MOV_COL_POSTER, (movie.getPoster_path() == null ) ? "" : movie.getPoster_path());
+            movies_values[i].put(MoviesEntry.MOV_COL_BACKDROP, (movie.getBackdrop_path() == null ? "" : movie.getBackdrop_path()));
+            movies_values[i].put(MoviesEntry.MOV_COL_OVERVIEW, (movie.getOverview() ) == null?  "": movie.getOverview());
             movies_values[i].put(MoviesEntry.MOV_COL_RELEASE_DATE, movie.getRelease_date());
             movies_values[i].put(MoviesEntry.MOV_COL_POPULARITY, movie.getPopularity());
             movies_values[i].put(MoviesEntry.MOV_COL_VOTE_COUNTS, movie.getVote_count());
@@ -55,7 +55,6 @@ public class UtilityMovieData {
         }
         return movies_values;
     }
-
 
     public static ContentValues[] prepareMoviesBulkData(String received_json)
     {

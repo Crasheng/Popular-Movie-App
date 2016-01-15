@@ -4,8 +4,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 
-import com.example.ahmad.popularmovies_final.Data.AppDBHelper;
-import com.example.ahmad.popularmovies_final.Data.MoviesContract;
+import com.example.ahmad.popularmovies_final.data.AppDBHelper;
+import com.example.ahmad.popularmovies_final.data.MoviesContract;
 
 import java.util.HashSet;
 
@@ -18,7 +18,7 @@ public class DBTest extends AndroidTestCase {
 
     public static final String LOG_TAG = DBTest.class.getSimpleName();
 
-    void deleteTheDataBase(){
+    void deleteTheDataBase() {
         mContext.deleteDatabase(AppDBHelper.DATABASE_NAME);
     }
 
@@ -27,7 +27,7 @@ public class DBTest extends AndroidTestCase {
         deleteTheDataBase();
     }
 
-    public void testCreateDB() throws Throwable{
+    public void testCreateDB() throws Throwable {
 
         final HashSet<String> nameOfTablesInDB = new HashSet<String>();
         nameOfTablesInDB.add(MoviesContract.MoviesEntry.TABLE_NAME);
@@ -37,7 +37,7 @@ public class DBTest extends AndroidTestCase {
 
         SQLiteDatabase db = new AppDBHelper(this.mContext).getWritableDatabase();
 
-        assertEquals(true,db.isOpen());
+        assertEquals(true, db.isOpen());
 
         // have we created the tables we want?
         Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
@@ -48,7 +48,7 @@ public class DBTest extends AndroidTestCase {
         // verify that the tables have been created
         do {
             nameOfTablesInDB.remove(c.getString(0));
-        } while( c.moveToNext() );
+        } while (c.moveToNext());
 
         // if this fails, it means that your database doesn't contain both the movie entry
         // and review entry tables
@@ -77,10 +77,10 @@ public class DBTest extends AndroidTestCase {
         movieColumnHashSet.add(MoviesContract.MoviesEntry.MOV_COL_VOTE_AVE);
 
         int columnNameIndex = c.getColumnIndex("name");
-        do{
+        do {
             String columnName = c.getString(columnNameIndex);
             movieColumnHashSet.remove(columnName);
-        }while(c.moveToNext());
+        } while (c.moveToNext());
 
         // if this fails, it means that your database doesn't contain all of the required location
         // entry columns

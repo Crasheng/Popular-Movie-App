@@ -1,4 +1,4 @@
-package com.example.ahmad.popularmovies_final.Intenet;
+package com.example.ahmad.popularmovies_final.Internet;
 
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;

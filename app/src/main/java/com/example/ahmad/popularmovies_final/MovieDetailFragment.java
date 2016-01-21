@@ -28,14 +28,13 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.ahmad.popularmovies_final.data.MoviesContract;
-import com.example.ahmad.popularmovies_final.Intenet.RESTAdapter;
+import com.example.ahmad.popularmovies_final.Internet.RESTAdapter;
 import com.example.ahmad.popularmovies_final.pojos.Reviews.ReviewsResponse;
 import com.example.ahmad.popularmovies_final.pojos.Videos.VideosResponse;
 import com.example.ahmad.popularmovies_final.pojos.Videos.VideosResult;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -380,10 +379,10 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
                     keys.add(result.getKey());
                 }
                 bundle.putStringArrayList("name", names);
-                bundle.putStringArrayList("name", keys);
+                bundle.putStringArrayList("key", keys);
                 final AvailableTrailersFragment dialog = new AvailableTrailersFragment();
                 dialog.setArguments(bundle);
-                //dialog.show(getActivity().getSupportFragmentManager(), "Videos_name");
+                dialog.show(getActivity().getSupportFragmentManager(), "Videos_name");
             }
 
             @Override

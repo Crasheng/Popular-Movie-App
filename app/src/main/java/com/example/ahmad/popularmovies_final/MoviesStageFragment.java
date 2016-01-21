@@ -29,7 +29,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import com.example.ahmad.popularmovies_final.Intenet.RESTAdapter;
+import com.example.ahmad.popularmovies_final.Internet.RESTAdapter;
 import com.example.ahmad.popularmovies_final.data.MoviesContract;
 import com.example.ahmad.popularmovies_final.data.MoviesContract.MoviesEntry;
 import com.example.ahmad.popularmovies_final.pojos.Movies.MovieResponse;
@@ -43,10 +43,12 @@ import retrofit.Response;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MoviesStageFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, Callback{
+public class MoviesStageFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, Callback {
 
     //LOG AN EVENT.
     public static final String TAG = "check_populating";
+    // The account name
+    public static final String ACCOUNT = "dummyaccount";
     //Cursor identifier.
     static final int CUR_LOADER_ID = 0;
     //constants
@@ -57,33 +59,25 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
     private static final String SORT_TYPE = "sort_type";
     private static final String DEFAULT_SORT_TYPE = "popularity.DESC";
     private static final String SORT_VOTE_TYPE = "vote_count.DESC";
+    // The account type
+    private static final String ACCOUNT_TYPE = "android.ahmedadel.pw";
     private static boolean is_there_data = true;
-
     //FLAG TO KNOW WHICH DEVICE WORKING RIGHT NOW.
     //private static boolean TABLET_FLAG = false;
     private static boolean INTERNET_STATUE_OPENED = true;
-
     //Column that you need to populate the stage screen.
     private static String[] projections = {
             MoviesEntry.TABLE_NAME + "." + MoviesEntry._ID,
             MoviesEntry.MOV_COL_ID,
             MoviesEntry.MOV_COL_POSTER
     };
-
     private static String arrangement_flag = null;
     private static SharedPreferences preferences;
-
     //Custom Cursor Adapter for movies data
     MovieCardAdapter movie_adapter_data;
-    private boolean fetch_internet_flag = false;
-
-    // The account type
-    private static final String ACCOUNT_TYPE = "android.ahmedadel.pw";
-
-    // The account name
-    public static final String ACCOUNT = "dummyaccount";
     // Instance fields
     Account mAccount;
+    private boolean fetch_internet_flag = false;
 
     public MoviesStageFragment() {
     }
@@ -124,7 +118,6 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
 
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -139,7 +132,6 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
 
         return view;
     }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -188,18 +180,16 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
         super.onActivityCreated(savedInstanceState);
     }
 
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main, menu);
 
-        //must be called after these items added to the menu.
+        //must be called after these items are added to the menu.
         menu.setGroupCheckable(R.id.menu_group, true, true);
 
         //depends on preferred movies sort
         setActivityLabel(menu);
     }
-
 
     //TODO
     //try to re factor the code and decompose and make it looks sexy.
@@ -233,6 +223,7 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
                 preferences.edit().putString(SORT_TYPE, arrangement_flag).commit();
                 getActivity().setTitle(FAVOURITES);
                 getLoaderManager().restartLoader(CUR_LOADER_ID, null, this);
+                return true;
             case R.id.refresh:
                 INTERNET_STATUE_OPENED = isNetworkAvailable(getActivity());
                 // Pass the settings flags by inserting them in a bundle
@@ -245,6 +236,7 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
                  * Request the sync for the default account, authority, and
                  * manual sync settings
                  */
+
                 ContentResolver.requestSync(mAccount,
                         getResources().getString(R.string.content_authority).toString(),
                         settingsBundle);
@@ -253,7 +245,6 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
                 return super.onOptionsItemSelected(item);
         }
     }
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -299,6 +290,42 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
         movie_adapter_data.swapCursor(null);
     }
 
+    /**
+     * Create a new dummy account for the sync adapter
+     *
+     * @param context The application context
+     */
+    private Account CreateSyncAccount(Context context) {
+        // Create the account type and default account
+        Account newAccount = new Account(
+                ACCOUNT, ACCOUNT_TYPE);
+        // Get an instance of the Android account manager
+        AccountManager accountManager =
+                (AccountManager) context.getSystemService(
+                        context.ACCOUNT_SERVICE);
+        /*
+         * Add the account and account type, no password or user data
+         * If successful, return the Account object, otherwise report an error.
+         */
+        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
+            /*
+             * If you don't set android:syncable="true" in
+             * in your <provider> element in the manifest,
+             * then call context.setIsSyncable(account, AUTHORITY, 1)
+             * here.
+             */
+        } else {
+            /*
+             * The account exists or some other error occurred. Log this, report it,
+             * or handle it internally.
+             */
+        }
+        ContentResolver.setSyncAutomatically(newAccount,
+                getResources().getString(R.string.content_authority).toString(),
+                true);
+        return newAccount;
+    }
+
     private boolean isNetworkAvailable(Activity activity) {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -306,7 +333,6 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
         //should check null because in air plan mode it will be null
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-
 
     void askInternetForMoviesAndShowProgressBar(Activity activity) {
         RESTAdapter adapter = new RESTAdapter("http://api.themoviedb.org/");
@@ -360,40 +386,8 @@ public class MoviesStageFragment extends Fragment implements LoaderManager.Loade
         }
     }
 
+    //for callback implementation
     public interface onMovieClick {
         void movieHasBeenClicked(Uri clicked_movie);
-    }
-
-    /**
-     * Create a new dummy account for the sync adapter
-     *
-     * @param context The application context
-     */
-    public static Account CreateSyncAccount(Context context) {
-        // Create the account type and default account
-        Account newAccount = new Account(
-                ACCOUNT, ACCOUNT_TYPE);
-        // Get an instance of the Android account manager
-        AccountManager accountManager =
-                (AccountManager) context.getSystemService(
-                        context.ACCOUNT_SERVICE);
-        /*
-         * Add the account and account type, no password or user data
-         * If successful, return the Account object, otherwise report an error.
-         */
-        if (accountManager.addAccountExplicitly(newAccount, null, null)) {
-            /*
-             * If you don't set android:syncable="true" in
-             * in your <provider> element in the manifest,
-             * then call context.setIsSyncable(account, AUTHORITY, 1)
-             * here.
-             */
-        } else {
-            /*
-             * The account exists or some other error occurred. Log this, report it,
-             * or handle it internally.
-             */
-        }
-    return newAccount;
     }
 }

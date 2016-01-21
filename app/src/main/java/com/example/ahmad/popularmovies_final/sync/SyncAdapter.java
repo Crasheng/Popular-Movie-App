@@ -51,4 +51,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d("sync", "onPerformSync");
     }
 
+
+    private void syncImmidatiliy()
+    {
+
+    }
 }

@@ -1,4 +1,4 @@
-package com.example.ahmad.popularmovies_final.Intenet;
+package com.example.ahmad.popularmovies_final.Internet;
 
 import com.example.ahmad.popularmovies_final.pojos.Movies.MovieResponse;
 import com.example.ahmad.popularmovies_final.pojos.Reviews.ReviewsResponse;

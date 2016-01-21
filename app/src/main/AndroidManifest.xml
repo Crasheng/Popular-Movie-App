@@ -58,10 +58,14 @@
             android:enabled="true"
             android:exported="true"
             android:process=":sync">
+            <!-->The intent filter lets it catch an intent requesting sync.
+             (This Intent comes from ContentResolver when you call ContentResolver.requestSync()
+              or related scheduling methods.)<-->
             <intent-filter>
-                <action android:name="android.content.SyncAdapter"/>
+                <action android:name="android.content.SyncAdapter" />
             </intent-filter>
-            <meta-data android:name="android.content.SyncAdapter"
+            <meta-data
+                android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
     </application>
